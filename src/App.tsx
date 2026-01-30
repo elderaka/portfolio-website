@@ -115,7 +115,6 @@ function App() {
   const dragMovedRef = useRef(false)
   const resetAnimRef = useRef<number | null>(null)
   const resetStartTimeRef = useRef(0)
-  const resetStartAngleRef = useRef(0)
 
   useEffect(() => {
     const timer = setTimeout(() => setBooted(true), 1000)
@@ -150,7 +149,6 @@ function App() {
     setWheelWobble(0)
 
     // Find nearest 90-degree position in full rotation history
-    const normalizedAngle = ((wheelAngle % 360) + 360) % 360
     const cardinalOffsets = [0, 90, 180, 270]
     
     let targetAngle = wheelAngle
