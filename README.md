@@ -1,133 +1,73 @@
-# Lauda Dhia Raka - Portfolio Website
+# React + TypeScript + Vite
 
-A high-performance, immersive portfolio website built with the "Cybernetic Brutalism" design philosophy. Features interactive 3D particle swarm visualization, node graph experience timeline, and a functional terminal interface.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 🚀 Tech Stack
+Currently, two official plugins are available:
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **3D Graphics**: React Three Fiber + Three.js
-- **Smooth Scrolling**: Lenis
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## ✨ Features
+## React Compiler
 
-### 🌀 Swarm Hero Section
-- Interactive 3D particle swarm simulation representing multi-agent systems
-- Particles react to mouse movement (agentic behavior)
-- Optimized with instanced meshes for performance
-- Mobile-responsive with lightweight fallback
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### 🎯 Neural Navigation
-- Floating "Command Palette" (Cmd/Ctrl+K) style navigation
-- Expands on hover to reveal all destinations
-- Keyboard-accessible with proper shortcuts
+## Expanding the ESLint configuration
 
-### 🔗 Node Graph Experience
-- Interactive visualization of work history as a node graph
-- Clickable nodes expand detailed "Data Cards"
-- Animated connection lines between nodes
-- Type-coded nodes (Full-time, Internship, Teaching)
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-### 📦 Bento Grid Projects
-- Interactive project cards with 3D tilt effect
-- Categorized: AI & Agents, Game Development
-- Hover reveals additional project details
-- Responsive grid layout
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### 💻 Terminal Footer
-- Functional CLI interface
-- Commands: `help`, `about`, `skills`, `contact`, `projects`, `exp`, `clear`
-- `sudo` triggers "Access Denied" glitch effect
-- Command history navigation (↑↓ keys)
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## 🎨 Design System
-
-- **Primary**: Cyan (#22d3ee)
-- **Secondary**: Purple (#a78bfa)
-- **Typography**: 
-  - Headers: JetBrains Mono (monospace)
-  - Body: Inter (sans-serif)
-- **Theme**: Dark mode with subtle grid patterns and glow effects
-
-## 📁 Project Structure
-
-```
-src/
-├── app/
-│   ├── globals.css      # Global styles & animations
-│   ├── layout.tsx       # Root layout with fonts
-│   └── page.tsx         # Main page component
-├── components/
-│   ├── SwarmCanvas.tsx      # 3D particle swarm
-│   ├── CommandPalette.tsx   # Navigation system
-│   ├── HeroSection.tsx      # Hero with typing effect
-│   ├── AboutSection.tsx     # Skills & bio
-│   ├── NodeGraph.tsx        # Experience timeline
-│   ├── BentoGrid.tsx        # Projects grid
-│   ├── TerminalFooter.tsx   # CLI interface
-│   └── SmoothScroll.tsx     # Lenis wrapper
-└── lib/
-    ├── data.ts          # Portfolio content data
-    └── utils.ts         # Utility functions
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## 🛠️ Getting Started
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn or pnpm
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-### Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-### Development
-
-The site will be available at `http://localhost:3000`
-
-## ⚡ Performance Considerations
-
-- 3D canvas unmounts when not in viewport
-- Mobile devices get reduced particle count
-- Instanced meshes used for particle rendering
-- Dynamic imports for client-side components
-- Optimized font loading with next/font
-
-## 📝 Customization
-
-### Updating Content
-
-Edit `src/lib/data.ts` to update:
-- Personal information
-- Experience entries
-- Projects
-- Skills
-- Terminal commands
-
-### Styling
-
-- Global styles in `src/app/globals.css`
-- Tailwind config in `tailwind.config.ts`
-- Color scheme defined in CSS variables
-
-## 📄 License
-
-MIT License - Feel free to use this as a template for your own portfolio!
-
----
-
-Built with ❤️ by Lauda Dhia Raka

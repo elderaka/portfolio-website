@@ -1,35 +1,36 @@
 {
-  "name": "lauda-portfolio",
-  "version": "0.1.0",
+  "name": "portfolio-neo",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^9.97.0",
-    "@react-three/fiber": "^8.15.16",
-    "@studio-freight/lenis": "^1.0.42",
-    "@tailwindcss/postcss": "^4.0.0",
-    "clsx": "^2.1.0",
-    "framer-motion": "^11.0.3",
-    "next": "14.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwind-merge": "^2.2.1",
-    "tailwindcss": "^4.0.0",
-    "three": "^0.161.0"
+    "@tensorflow/tfjs": "^4.22.0",
+    "lucide-react": "^0.563.0",
+    "node": "^25.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sql.js": "^1.13.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.16",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.18",
-    "@types/three": "^0.161.2",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0",
-    "postcss": "^8.5.6",
-    "typescript": "^5.3.3"
+    "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4"
   }
 }
