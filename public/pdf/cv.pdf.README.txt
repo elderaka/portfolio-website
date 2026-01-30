@@ -1,0 +1,6 @@
+// Simple static proxy for serving the CV PDF from /pdf/cv.pdf
+// Place this file in your public directory as public/pdf/cv.pdf
+// No server code needed for static hosting, just move the file.
+
+// If you are using Vite, Next.js, or similar, place the PDF in the public/pdf folder.
+// Then use href="/pdf/cv.pdf" in your anchor tag.

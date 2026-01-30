@@ -1,0 +1,31 @@
+{
+  "name": "dungeon-governor",
+  "version": "1.0.0",
+  "description": "Administrative control system for automated dungeon management",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "dashboard": "npx http-server dashboard -p 3000"
+  },
+  "keywords": [
+    "game",
+    "multi-agent",
+    "automation",
+    "machine-learning",
+    "governance"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2",
+    "http-server": "^14.1.1"
+  }
+}

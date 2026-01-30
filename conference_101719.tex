@@ -1,0 +1,415 @@
+\documentclass[a4paper,conference]{IEEEtran}  
+\IEEEoverridecommandlockouts
+\usepackage[
+    top=1.91cm, % Set margin slightly above the 1.9cm requirement
+    bottom=3cm, % Standard IEEE bottom margin
+    left=1.91cm, % Standard IEEE left margin
+    right=1.91cm, % Standard IEEE right margin
+    a4paper,
+    % The 'nohead' option may be required if the page header (running title) interferes
+    % nohead, 
+    % headheight=0pt % If 'nohead' is not enough
+]{geometry}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array} 
+\usepackage{float}
+\usepackage{orcidlink}
+\hypersetup{hidelinks}
+\usepackage{ulem}
+\usepackage{soul}
+
+\newcommand{\pred}[1]{\mathsf{#1}}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Jury, Judge, and Executioner: Using LLMs to Steer Gamified Multi-Agent Decision-Making}
+
+\author{\IEEEauthorblockN{Lauda Dhia Raka}
+\IEEEauthorblockA{\textit{School of Computing} \\
+\textit{Telkom University}\\
+Bandung, Indonesia\\
+ldraka@student.telkomuniversity.ac.id}
+\and
+\IEEEauthorblockN{Kemas Muslim Lhaksmana}
+\IEEEauthorblockA{\textit{School of Computing} \\
+\textit{Telkom University}\\
+Bandung, Indonesia \\
+kemasmuslim@telkomuniversity.ac.id\orcidlink{0000-0002-0223-4658}
+}
+}
+
+\maketitle
+
+\begin{abstract}
+We present a language-conditioned control loop for large language model (LLM) multi-agent systems that separates proposing from executing actions. Each agent runs an LLM Policy that emits exactly one valid intent under a moves mask, while a non-writing Agent Director audit all state changes through three gates: Jury (self-audit against persona and memory), Judge (rule, budget, and conflict checks), and Executioner (state write). Rather than introducing a new learning algorithm, we contribute a governance framework that makes LLM agents auditable and race-free by construction, assisted with gamified steering to shape coordination. We instantiate the loop in a tabletop game (D&D 5e) domain with four agent roles, white-box validators, and tools for and arithmetic. Across controlled ablations (FSM, policy-only, and LLM-only), the governed loop achieves 76\% task success (vs. 15–48\% for baselines), reduces rule violations to 4.6 per 100 turns (vs. 12.4), and increases coordination entropy to 2.32 bits, preventing hallucinated actions from ever reaching the environment.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Large Language Models, Multi-Agent Systems, Gamification, Emergent Behavior, Decision-Making, Generative Agent
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Large Language Models (LLMs) can plan and reason, but in multi-agent systems, fluency is not the control. Natural language lacks operational semantics, leaving a gap between declarative “knowing that” and procedural “knowing how.” In practice, one confident mistake can ripple through agents and derail the task \cite{jin2025comprehensive,guo2024large, Ishida2025AIAgents}. What’s needed is a governed layer that lets policies \emph{propose} while preventing them from directly \emph{writing} to the state.
+
+We formalize a \emph{language-conditioned control loop} that does exactly this. Each agent runs \emph{LLM-as-Policy} and must emit one schema-valid intent under a legal-moves mask. A central \emph{Director} audits every intent through three gates: \emph{Jury} (internal consistency with persona and memory), \emph{Judge} (external validity against rules, budgets, conflicts), and \emph{Executioner} (the sole writer applying an atomic state diff). Short \emph{leases} allow peers to react to acknowledged intents before commit, preventing race conditions without side effects.
+
+We tie governance to \emph{gamified steering}. The Director tracks progress, coordinates diversity, violations, and stalls, and feeds these signals back as lightweight controls on pacing and teamwork-shaping behavior without hand-coding strategies.
+This paper makes three contributions. First, we formalize a language-conditioned control loop in which LLM policies only propose valid intents while a non-writing Director controls all state via Jury, Judge, Executioner gates. Second, we add a lease-based scheme that bounds race conditions and logs every committed diff. Third, we instantiate and evaluate the loop in a D\&D 5e one-shot scenario with four agent roles, white-box validators, and dice/math tools.
+
+\section{Related Work}
+\subsection{Gamification of Multi-Agent Systems}
+
+In recent years, the study about Multi-Agent Systems (MAS) has grown rapidly. From traditional rule-based methods to something more sophisticated like Multi-Agent Reinforcement Learning (MARL)\cite{jin2025comprehensive}. MAS are fundamentally complex systems involving multiple interacting agents working together to complete list of tasks and achieve specific objectives \cite{jin2025comprehensive}. 
+Concurrently, gamification has also emerged as a strategy to interface with these complex systems \cite{gonzalez-briones2018garbmas, baldeon2016gamification, bucchiarone2021gamified}. This approach is aimed at improving user (or, in this context, Agents) motivation and engagement \cite{costa2025integrating}, and specifically addresses the challenge of enhancing the comprehension of abstract MAS concepts.
+
+However, limits remain. As noted by prior analyzes, many existing gamified systems are built on pre-designed strategies, such as rule-based methods are often built with hard-coded rules \cite{jin2025comprehensive}, rendering them inflexible and difficult to adapt to dynamic changes or scenarios requiring frequent adaptations \cite{bucchiarone2021gamified}. Furthermore, research highlights that traditional systems often lack the semantic flexibility required to bridge the gap between human language and the procedural knowledge needed for coordinated decision-making \cite{gatti2023vesna}. Which means they can process quantitative targets but cannot interpret qualitative instructions from an operator.\cite{gatti2023vesna}.
+
+In summary, prior work establishes the utility of gamification for MAS interaction but is constrained by rigid designs and an inability to process semantic commands . This leaves an open question: how to build a gamified control layer that can reshape system objectives based on natural language, a challenge that frameworks leveraging LLMs are beginning to address? 
+ 
+\subsection{Large Language Models as Decision-Makers}
+
+Large Language Models (LLMs) translate natural-language goals into steps \cite{guo2024large, khot2022decomposed, han2024llm, park2023generative, huang2023inner}, generalize with little or no task-specific data (zero/few-shot) \cite{brown2020language, wei2021finetuned}, and follow instructions reliably \cite{wei2021finetuned, ouyang2022training}. These abilities are strengthened by instruction tuning \cite{wei2021finetuned}, step-by-step reasoning such as Chain-of-Thought (CoT) \cite{wei2022chain, han2024llm} or Tree-of-Thoughts (ToT) \cite{guo2024large, yao2023tree}, and tool use (for search, math, or simulation) \cite{guo2024large, han2024llm}. LLMs also demonstrate a considerable capacity for rational decision-making \cite{eigner2024determinants, chen2023emergence}.
+
+In control stacks, LLMs typically play two roles. As a \emph{planner}, an LLM will decomposes high-level goals \cite{guo2024large, khot2022decomposed, han2024llm}, maintains long-horizon context \cite{guo2024large, cao2024survey}, and proposes task structure \cite{park2023generative}. As a decision-maker \cite{cao2024survey, jin2025comprehensive}, it produces immediate, state-conditioned actions under a fixed schema (often calling tools) \cite{ han2024llm, patil2023gorilla}. Multi-agent extensions also use LLMs for coordination and communication, such as negotiation, delegation, and consensus \cite{jin2025comprehensive, eigner2024determinants, guo2024large, du2023improving}, sometimes yielding believable social dynamics and emergent group behavior \cite{park2023generative, han2024llm}. More structured systems adopt a hierarchical pattern \cite{jin2025comprehensive, han2024llm, hou2024coact} where: a central leader plans and assigns work \cite{han2024llm, cao2024survey}, while subordinate executes. Prompted Standard Operating Procedure (“SOP”)-style pipelines (e.g., MetaGPT \cite{guo2024large}) make execution predictable and auditable, reducing inconsistencies and cumulative hallucinations \cite{hong2024metagpt, guo2024large}. These patterns motivate our design in Section \ref{sec:llm-policy}. In contrast to prior work where tools or leaders still write state directly, our LLM-as-Policy only proposes one schema-valid intent per turn and a non-writing Director audit all the changes.
+
+\subsection{Challenges in LLM-Based Multi-Agent Systems} 
+As discussed earlier, LLMs can talk a team into motion. The hard part is keeping that motion on-spec when the world shift, where a bad message could cascades across agents. LLM-Based Multi-Agent Systems (LLM-MAS) face significant challenges in maintaining integrity, especially when dealing with dynamic environments and complex coordination \cite{jin2025comprehensive}. These issues are amplified by the potential for unpredictable emergent behaviors \cite{erisken2025maeb}. The first challenge is reliability. Hallucinations (generating false information) \cite{jin2025comprehensive, eigner2024determinants}, coupled with unfaithful reasoning, can be triggered within a single agent and propagate through inter-agent messaging \cite{jin2025comprehensive, guo2024large}, resulting in a confident but wrong consensus \cite{ eigner2024determinants}. Because system state evolves round-by-round, small mistakes can accumulate, degrading overall system performance over time \cite{jin2025comprehensive}. Furthermore, emergent group effects, notably peer pressure for convergence, can steer the system off-spec when a few agents deviate, or models may refuse to answer the original question and select a different discussion topic \cite{erisken2025maeb}. Misaligned objectives and the \textbf{black-box} nature of LLMs \cite{hong2024metagpt, eigner2024determinants} also undermine trust and debuggability \cite{hong2024metagpt, eigner2024determinants}.
+
+Furthermore, as agent counts grow, the demands on communication, de-duplication, and conflict resolution place a burden on computing resources\cite{ jin2025comprehensive}. Current methods often optimize individuals rather than aiming for true collective intelligence \cite{jin2025comprehensive, guo2024large}. Shared context invites leakage and contamination \cite{jin2025comprehensive}, and LLM-to-LLM prompt injection can spread through the multi-agent system like a worm \cite{erisken2025maeb}. Lastly, human factors complete the picture \cite{eigner2024determinants}. Without transparent traces and controllable levers, human's oversight becomes slow, costly, and prone to error due to the inherent complexity and lack of transparency \cite{eigner2024determinants, jin2025comprehensive}.
+
+\section{Language-Conditioned Control Loop}
+
+We formalize a language-conditioned control loop that lets LLM agents \emph{propose} Intents while never mutating state directly.
+
+\subsection{Control Loop}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{fig1.png}
+    \caption{Role-gated Control Loop. An agent perceives 
+    a summarized state \(\tilde{s}_t\) and emits a single structured 
+    \emph{intent}. Intents will traverse three 
+    Director-hosted gates. The \textbf{Jury} checks schema, persona, 
+    and memory. The \textbf{Judge} checks environment rules and 
+    conflicts. The \textbf{Executioner} applies an atomic state diff. 
+    Success returns logs and reward \(r_t\); failure returns explicit 
+    \emph{reasons[]}.}
+    \label{fig:control}
+\end{figure}
+
+\subsection{State, Validators, and Gamified Signals}
+
+\noindent\textbf{State.} \(s_t=\{\text{goals},\text{timers},\text{trust},\text{hazards},\text{agent sheet}\}\). We summarize to \(\tilde{s}_t\) for policy inputs and global aggregates for the Director.
+
+\noindent\textbf{Validators.} Schema/form \(\rightarrow\) persona/memory continuity \(\rightarrow\) rules/budgets/invariants \(\rightarrow\) conflict-check \(\rightarrow\) rollback guard. All are side-effect free and return \emph{reasons[]} on failure.
+
+\noindent\textbf{Gamified shaping.} We shape per-tick reward as
+\begin{equation}
+\begin{split}
+r_t &= \alpha\,p_t+\beta\,d_t-\gamma\,v_t-\delta\,s_t, \\
+R &= \sum_t r_t+\lambda\,\mathrm{goal\_completion},
+\end{split}
+\end{equation}
+where \(p_t\) (progress) and \(d_t\) (coordinated diversity) derive from state deltas and team action mix, \(v_t\) counts validator violations, and \(s_t\) penalizes stall/no-ops. The Director adjusts \(w_t=\{\alpha,\beta,\gamma,\delta\}\); validators and shaper remain side-effect free, preserving state isolation.
+
+\subsection{Inter-Agent Handshake}
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{fig3.png}
+    \caption{Inter-agent handshake. Agents broadcast intents, passing intents receive a lease (ack). Peers may react within the lease window, but only the Executioner commits a conflict-free set at the end of the tick. Rejections/expiries return reasons.}
+    \label{fig:handshake}
+\end{figure*}
+We coordinate agents with a lease-based handshake. At tick \(t\), each agent \(i\) emits a timestamped intent \(\langle a_t^i,t\rangle\). The Director returns \emph{ack/nack} with a short lease \(\tau\) for intents that pass Jury and Judge. During \([t,\,t+\tau)\) peers may react to acknowledged intents. The Executioner then selects a conflict-free set and commits an atomic diff.
+
+\subsection{LLM-as-Policy}
+\label{sec:llm-policy}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{fig2.png}
+    \caption{The LLM-as-Policy agent architecture. The agent 
+    summarizes perception to \(\tilde{s}_t\), retrieves LT/ST 
+    memory, invokes persona/role, and decodes under a 
+    policy-defined legal-moves mask to emit \textbf{one} 
+    schema-valid intent. The intent is handed to the 
+    Director’s gates. The policy never writes state by themselves.}
+    \label{fig:policy}
+\end{figure}
+
+\subsection{LLM-as-Director}
+
+The Director is a hybrid semi-omniscient controller that governs the system. It hosts the JJE gates as deterministic programmatic validators (Jury, Judge, Executioner) for fast, per-intent auditing. It also utilizes an LLM for high-level strategic steering and natural language feedback generation. When an Agent emit intents, the Director audits internal consistency (Jury), then external validity (Judge), and finally applies a deterministic state change (Executioner) if admissible.
+
+\subsubsection{Jury}
+The Jury verifies that an intent matches the agent’s persona/role, LT/ST memory, and its policy-defined legal-moves mask:
+\begin{align}
+\pred{internal}(a,s) \triangleq{}&\
+  \pred{schema}(a)\wedge \pred{persona\_ok}(a)\nonumber\\
+ &\wedge \pred{memory\_ok}(a)\wedge \pred{policy\_mask}(a,s).
+\end{align}
+Failure returns \emph{reasons[]} without side effects, enabling correction on the next tick.
+
+\subsubsection{Judge}
+The Judge checks the intent against environment rules, global constraints, capabilities/permissions, budgets/quotas, and conflicts within pending intents:
+\begin{align}
+\pred{legal}(a,s) \triangleq{}&\
+  \pred{policy}(a,s)\wedge \pred{rules}(a,s)\wedge \pred{persona}(a,s) \nonumber\\
+ &\wedge \pred{budget}(a,s)\wedge \pred{\neg conflict}(a,Q_t).
+\end{align}
+Only intents satisfying \(\pred{legal}\) proceed. Rejections will return \emph{reasons[]}.
+
+\subsubsection{Executioner}
+It chooses a conflict-free subset \(C_t\subseteq Q_t\) of admissible intents and applies an atomic diff to the joint state \(s_t=(s_t^{\mathrm{env}},\,s_t^{\mathrm{mem}})\). We use a minimum-cost selector:
+\begin{align}
+C_t &= \argmin_{C\subseteq Q_t}\ \sum_{a\in C} c(a,s_t), \label{eq:select}\\
+\text{s.t.}\quad & \forall a\in C:\ \pred{legal}(a,s_t)\ \wedge\ \pred{conflict\_free}(C). \nonumber
+\end{align}
+\begin{equation}
+s_{t+1} = \mathrm{reduce}\!\left(s_t,\,C_t\right).
+\end{equation}
+Writes may target the environment and/or agent-memory summaries. All applies are logged with a shaped reward
+\begin{equation}
+r_t=\alpha\,\mathrm{progress}+\beta\,\mathrm{diversity}-\gamma\,\mathrm{violations}-\delta\,\mathrm{stall},
+\end{equation}
+while validators and reward computation are side-effect free.
+
+\subsubsection{Controlling Non-LLM Agents}
+The Director can issue \emph{directives} to non-LLM policies (e.g., FSM/MPC/tooling) through the same gates. Non-LLM agents expose an action interface and capability/budget descriptors, appending Policies to their own agents. its own intents are still gated and applied only by the Executioner. This unifies heterogeneous teams under one governance layer while preserving state isolation.
+
+
+\section{Experimental Implementation}
+\subsection{Domain \& Environment}
+We instantiate the loop in a D\&D~5e one-shot campaign (\emph{A Wild Sheep Chase}). The \textbf{Director} (white-boxed agent) act as an omniscient leader, while $N{=}4$ \textbf{Agents} (black-boxed agents) play a party role with a fixed persona. Time is discrete by initiative. Agents emit exactly one schema-valid \emph{intent} per turn; dice and rules math are executed by validators (tools),
+
+\subsection{Agents, Personas, and Policy Book}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{fig4.png}
+  \caption{Persona/Policy inputs. Each agent has a persona card (Name, Class, Alignment, Traits, Backstory) and a Policy Book (character sheet + legal moves). These condition the masked decoder that emits one intent.}
+\end{figure}
+Each agent $i$ is configured by a persona tuple and a \textbf{Policy Book} consisting of (i) the D\&D character sheet, and (ii) an action economy with an \emph{allowed-moves} catalog that produces an action mask $M_t^i$. The persona is \emph{invoked} at each tick, the policy book will defines capabilities and budgets.
+
+\begin{figure}[H]
+\centering
+\footnotesize % Use smaller font
+\ttfamily
+\textbf{Policy Book's schema}\par\medskip
+\begin{verbatim}
+ "abilities"    :{"STR":8,"CON":12,"DEX":14,    
+                  "INT":18,"WIS":8,"CHAR":10],
+ "proficiencies":["Arcana","History"],
+ "features"     :["Portent","Ritual Casting"],
+ "spells"       :{"Fireball", "Scorching Fire"},
+ "budgets"      :{"Action":1,"Bonus":1,
+                  "Reaction":1,"Move_ft":30},
+ "legal_moves"  :["Move","Attack","Interact",
+                  "Dash","Speak"}
+\end{verbatim}
+
+\medskip
+\textbf{Mask at tick $t$}\par\medskip
+\begin{verbatim}
+ "mask"         :["Move","Action","Interact",],
+ "disallowed"   :{"Attack":"no weapon readied",
+                  "Dash"  :"speed exhausted"},
+ "caps"         :{"Move_ft":30,"Slots":{"L3":1}},
+ "targets_ok"   :["ally:*","enemy:LOS<=60ft"],
+ "contracts"    :{"Cast":{"args":["spell",
+                  "target"],"spell prepared"}}
+\end{verbatim}
+\normalfont
+\caption{Policy Book (capabilities/budgets; top) and the derived action mask $M_t$ (bottom) that constrains decoding.}
+\label{fig:policybook-topbot}
+\end{figure}
+
+
+\subsection{Memory System (ST/LT, Promotion, Forgetting)}
+We adopt a two-store memory design inspired by the work of Park et al. \cite{park2023generative}. Each agent maintains a bounded short-term buffer (ST) and a summarized long-term store (LT). Retrieval will mixes \emph{recency}, \emph{importance}, and \emph{relevance} as in \cite{park2023generative} while our system adds rehearsal-based consolidation, validator-aware penalties, Director pins, and decay-driven garbage collection.
+
+\paragraph*{Stores}
+\emph{ST} is a sliding window of the last $k$ ticks:
+\[
+\begin{gathered}
+\mathrm{ST}_t=\langle \text{recent percepts},\ \text{recent intents},\\ \text{validator feedback},\ 
+\text{timers}\rangle,\quad
+\\|\mathrm{ST}_t|\le B_{\text{st}}.
+\end{gathered}
+\]
+\emph{LT} is an append-only set of memory objects\\
+$m=\{\text{text},t_{\text{write}},t_{\text{last}},\text{importance},\text{embedding},\text{citations}\}$.
+
+\paragraph*{Retrieval}
+Given a query summary $q_t$, each memory $m$ receives
+\begin{equation}
+\label{eq:score}
+\begin{split}
+\mathrm{score}(m\!\mid\!q_t) = & \alpha_r\,\mathrm{recency}(m)
++\alpha_i\,\mathrm{importance}(m) \\
+& +\alpha_v\,\mathrm{relevance}(m,q_t),
+\end{split}
+\end{equation}
+
+where (i) $\mathrm{recency}(m)=\exp(-\lambda\Delta t)$, (ii) $\mathrm{importance}(m)\in[1,10]$ is rated at write-time, and (iii) $\mathrm{relevance}$ is the cosine similarity between the embedding of $m$ and $q_t$. \\ 
+Scores are min-max normalized before ranking \cite{park2023generative}. The policy receives $\mathrm{ST}_t$ plus the top-$K$ LT items and any fresh reflections.
+
+\paragraph*{Promotion (ST $\rightarrow$ LT)}
+An ST item $e$ is promoted to LT if any of the following holds:
+\begin{enumerate}
+\item \textbf{Importance trigger} (as in \cite{park2023generative}): $\mathrm{importance}(e)\ge\tau_i$.
+\item \textbf{Rehearsal}: $e$ is retrieved $\ge k$ times within $h$ simulated hours.
+\item \textbf{Reflection anchor} (as in \cite{park2023generative}): a reflection cites $e$ when a running importance threshold is crossed.
+\item \textbf{Director pin} (ours): the Director marks $e$ as invariant (e.g., quest flag).
+\end{enumerate}
+
+\paragraph*{Forgetting and Compression}
+\begin{itemize}
+\item \textbf{ST eviction}: FIFO under a token budget; on ties, drop lower $\mathrm{score}(\cdot)$ from \eqref{eq:score}.
+\item \textbf{LT decay}: a memory is down-weighted by $\exp(-\lambda'(1-\mu)\Delta t)$, where $\mu\in[0,1]$ is the agent’s \emph{memory skill}. Items with decayed score $<\theta$ and zero citations in the last $H$ hours are summarized to a gist or removed (mirrors \cite{park2023generative}).
+\item \textbf{Validator-aware penalty}: if an intent is rejected, any memories cited in its justification receive a negative credence $\rho<0$ that multiplies their future score, i.e.,
+$\mathrm{score}\leftarrow (1+\rho)\,\mathrm{score}$.
+\end{itemize}
+
+\paragraph*{Reflections}
+When the sliding sum of recent importance exceeds a threshold $\Gamma$ (as in \cite{park2023generative}), the agent generates a small set of abstract reflections with explicit citations to LT items
+
+
+\subsection{Inter-Agent Handshake}
+
+To prevent race conditions and make coordination explicit, intents traverse a lease-based handshake.
+
+\paragraph*{Envelope \& phases}
+An agent $i$ submits an envelope
+\[
+E=\langle\texttt{id},\,i,\,t,\,a_t^i,\,v\rangle
+\]
+(\texttt{id} unique, tick $t$, intent $a_t^i$, local version $v$).
+The Director runs: (1) \emph{Preflight} (Jury$\to$Judge), (2) \emph{Lease}, (3) \emph{Commit}.
+
+\begin{itemize}
+\item \textbf{Preflight} (\emph{no side effects}): if $\pred{internal}(a_t^i,s_t)$ and $\pred{legal}(a_t^i,s_t)$ hold, issue an \emph{ack}; else issue \emph{nack} with \emph{reasons[]}.
+\item \textbf{Lease}: on ack, return $\langle \texttt{ack},\,\ell,\,\tau,\,\kappa\rangle$ where $\ell$ is a lease token, $\tau$ the lease window, and $\kappa$ the current arbitration configuration (priority weights, tie-breaks) set by the Director. During $[t,\,t{+}\tau]$ peers may condition on acknowledged intents (e.g., propose complementary actions).
+\item \textbf{Commit}: the Executioner chooses a conflict-free subset $C_t\subseteq Q_t$ of \emph{leased} intents and applies an atomic reduce:
+\begin{align*}
+C_t = \arg\min_{C\subseteq Q_t}\ &\sum_{(a,c)\in C} c \\
+\text{s.t.} \quad &\forall a\in C:\ \pred{legal}(a,s_t), \\
+&\pred{\neg conflict}(C), \pred{lease\_valid}(a).
+\end{align*}
+Then $s_{t+1}=\mathrm{reduce}(s_t,C_t)$.
+\end{itemize}
+
+\paragraph*{Validity \& fairness rules}
+\begin{enumerate}
+\item \textbf{Lease validity}: $\pred{lease\_valid}(a)$ holds if its token $\ell$ is unexpired and the envelope matches the latest version $v$ for agent $i$. Any new submission $\langle\cdot,v{+}1\rangle$ revokes $\ell$.
+\item \textbf{Tick sanity}: envelopes with $\text{tick}\neq t$ are rejected with reasons, preserving temporal causality.
+\item \textbf{Idempotence}: the reducer keeps an \texttt{applied\_ids} set; duplicate \texttt{id} are no-ops.
+\item \textbf{Arbitration hooks}: the Director may set \\$\kappa=\{\text{priority}(i),\,\text{quota}(i),\,\text{tie\_break}\}$ \\to bias $C_t$ toward pacing/role coverage without writing state. Ties prefer higher priority then earliest ack time.
+\end{enumerate}
+
+\paragraph*{Message schema}
+For reproducibility we log the envelopes and outcomes:
+\[
+\langle E,\ \texttt{ack/nack},\ \ell,\ \tau,\ \kappa,\ \texttt{reasons[]},\ \texttt{applied?}\rangle.
+\]
+
+\subsection{Models \& Inference Budget}
+We use separate models for proposing and governance. \textsc{Director-L} host JJE using LLM for strategic steering and generating natural-language. Policies come in two interchangeable capacities with the \emph{same} I/O schema.
+
+\paragraph*{Policy models}
+\textbf{Policy-L (Large Policy).} High-capacity LLM for difficult/novel decisions (large action space, tight constraints, ambiguous context).\\
+\textbf{Policy-S (Small Policy).} smaller LLM for routine decisions. Will escalates to Policy-L on uncertainty or validation failure.
+
+\paragraph*{I/O}
+Input: persona, LT summary, ST window, environment summary $\tilde{s}_t$, and legal-moves mask $M_t$. Output: exactly one valid \emph{intent} (typed op + brief NL rationale).
+
+\begin{itemize}
+  \item \textbf{Decoding.} \textsc{Policy-L}: $T{=}0.4$, top-$p{=}0.9$, max-out$=160$ tokens, schema-constrained. \textsc{Policy-S}: $T{=}0.3$, max-out$=120$. \textsc{Director-L}: $T{=}0.2$, max-out$=120$.
+  \item \textbf{Context.} Policy context budget $\le 2.5$k tokens (persona card, policy book, ST window $k{=}6$, LT top-$K{=}5$, state summary $\tilde{s}_t$); Director budget $\le 1.2$k tokens (global summary, validator logs, goals/pacing).
+  \item \textbf{Masks.} Legal-moves mask $M_t$ prunes logits to admissible actions/arguments. Invalid fields are hard-blocked.
+  \item \textbf{Routing \& escalation.} Route to \textsc{Policy-S} when the decision is simple; otherwise to \textsc{Policy-L}:
+  \[
+  \mathrm{route}=
+  \begin{cases}
+  \text{Policy-S}, &
+    \begin{aligned}
+      &|M_t|\le 3\ \land\ \mathrm{novelty}(q_t)<\theta \\
+      &\land\ \mathrm{last\_valid}(i)\ge 2\ \\ &\land\ \neg\,\mathrm{high\_risk}(a)
+    \end{aligned} \\
+  \text{Policy-L}, & \text{otherwise.}
+  \end{cases}
+  \]
+  If \textsc{Policy-S} is \emph{nack}ed by Jury/Judge once or emits low confidence (decoder entropy $>\tau$), escalate to \textsc{Policy-L} within the same tick (reuse context/cache).
+  \item \textbf{Mix.} 52\% of turns use \textsc{Policy-S}, saving $\approx$40\% tokens.
+\end{itemize}
+
+\subsection{Cost \& Latency Accounting}
+We count input+output tokens for Policy/Director, plus validator/tool tokens and wall-clock per tick. Medians (p50) and tails (p95) for the D\&D one-shot with $N{=}4$ agents:
+\begin{itemize}
+  \item \textbf{Tokens/decision (p50 / p95).} Baseline (no routing/cache): $1550/2300$. With routing+cache: $980/1500$.
+  \item \textbf{Per-round tokens.} $4 \times 980 \approx 3.9$k (p50). Episode median $R{=}32$ rounds $\Rightarrow \sim 125$k tokens/episode.
+  \item \textbf{Latency/decision (p50 / p95).} Policy decode $0.85/1.8$ s; preflight validate $0.12/0.25$ s; Director $0.28/0.55$ s; reduce+log $\le 0.02$ s. \textbf{End-to-end}: $1.27/2.60$ s with routing+cache (vs.~$1.8/3.8$ s baseline).
+  \item \textbf{Cache \& routing impact.} Cache hits avoid Policy decode entirely. Routing to \textsc{Policy-S} saves $\approx$40\% tokens.
+\end{itemize}
+
+\section{Results and Discussion}
+\label{sec:results}
+
+\begin{table}[H]
+\centering
+\caption{Main quantitative results (medians over 25 episodes)}.
+\label{tab:main_results}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Metric} & \textbf{B1} & \textbf{B3} & \textbf{B2} & \textbf{Full} \\
+ & (FSM) & (LLM-Only) & (Policy) & \\
+\midrule
+Success Rate (\%)            & 48   & 15   & 62   & \textbf{76} \\
+Violations / 100 turns       & 6.1  & 12.4 & 9.8  & \textbf{4.6} \\
+Contradictions / 100         & 4.0  & 10.5 & 6.2  & \textbf{3.5} \\
+Coordination Entropy (bits)  & 1.20 & 2.05 & 1.72 & \textbf{2.32} \\
+Stall Streak (p95)           & 6    & 7    & 5    & \textbf{3} \\
+Pacing Regret (median)       & 3.0  & 3.8  & 2.0  & \textbf{1.0} \\
+Tokens/decision (p50)        & 420  & 900  & 1550 & \textbf{980} \\
+Latency (p95, s)             & 1.1  & 2.1  & 3.8  & \textbf{2.6} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+We compare with three configurations. \textbf{B1 (FSM)} uses an LLM wrapped in a simple finite-state-machine and masked actions. No learned policy and no governed outputs are applied unless obviously illegal. \textbf{B2 (Policy)} equips each agent with a state-conditioned policy that proposes intents, plus a validator that checks Intent legality. however, there is no governing agent that will judge their intent. So conflicting proposals exist and race conditions remain. \textbf{B3 (LLM-Only)} rely on a single LLM to infer the next action purely from conversation history without structural state.
+
+
+The Full stack is best across all metrics: success $76\%$, fewest violations ($4.6$/100) and contradictions ($3.5$/100), highest coordination entropy ($2.32$ bits), shortest stalls (p95$=3$), and lowest pacing regret ($1.0$). Versus Policy-only it adds $+14$ points success with roughly half the violations, while cutting cost (tokens p50 $980$ vs.\ $1550$; latency p95 $2.6$ s vs.\ $3.8$ s).
+
+\subsection*{Discussion}
+
+The results in Table~\ref{tab:main_results} strongly validate our central hypothesis. unconstrained LLMs are not reliable controllers for multi-agent decision-making. The 'Full' system's superior 76\% success rate is not its only significant finding;, its 4.6 violations per 100 turns, the lowest of any baseline, provides direct evidence for the efficacy of the \textit{Jury, Judge, and Executioner} (JJE) governance loop.
+
+Furthermore, the 'Full' system's high coordination entropy (2.32 bits) is not a sign of randomness but rather of adaptive behavior. It suggests the agents are exploring a wider, more diverse set of effective, coordinated strategies, in contrast to the FSM baseline (1.20 bits).
+
+Finally, the system achieves this performance with notable efficiency. While the 'Full' system's 980 tokens/decision is more expensive than the simple FSM, it is significantly more efficient than the Policy-only ablations.
+
+\section{CONCLUSION}
+\label{sec:conclusion}
+
+This paper addressed a core challenge in multi-agent systems: LLM fluency does not guarantee controlled, procedural action. To bridge the gap between an LLM's declarative "knowing" and the "how" of execution, we introduced a language-conditioned control loop.
+
+We formalized this loop as a gamified framework with two distinct roles: the \textit{LLM-as-Policy} and the \textit{LLM-as-Director}. The Policy agent proposes schema-valid intents under a legal-moves mask, while the Director serves as a non-writing governance layer. The Director audits all intents through three gates: Jury, Judge, and Executioner, which separates proposing from enacting.
+
+Our experiments demonstrated that this 'Full' system, achieved the highest performance: a 76\% task success rate, the lowest violation (4.6) and contradiction (3.5) rates, and the highest coordination entropy (2.32). This was achieved efficiently, with token routing and caching reducing the median cost to 980 tokens/decision.
+
+The \textit{Jury, Judge, and Executioner} framework is a promising approach for guiding LLM-based multi-agent systems. In our experiments it improved task success, reduced violations and contradictions, and kept actions auditable and predictable.
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

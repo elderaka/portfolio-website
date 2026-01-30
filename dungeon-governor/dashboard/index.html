@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dungeon Governor - Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="dashboard-header">
+      <h1>Dungeon Governor</h1>
+      <p class="subtitle">Administrative Control Interface</p>
+    </header>
+
+    <div class="dashboard-grid">
+      <section class="card governance-panel">
+        <h2>Governance Parameters</h2>
+        <div class="parameter-group">
+          <div class="parameter-item">
+            <label for="alpha">Progress Weight (α)</label>
+            <input type="range" id="alpha" min="0" max="2" step="0.1" value="1.0">
+            <span class="value" id="alpha-value">1.0</span>
+          </div>
+          <div class="parameter-item">
+            <label for="beta">Diversity Weight (β)</label>
+            <input type="range" id="beta" min="0" max="2" step="0.1" value="0.5">
+            <span class="value" id="beta-value">0.5</span>
+          </div>
+          <div class="parameter-item">
+            <label for="gamma">Violation Penalty (γ)</label>
+            <input type="range" id="gamma" min="0" max="2" step="0.1" value="0.8">
+            <span class="value" id="gamma-value">0.8</span>
+          </div>
+          <div class="parameter-item">
+            <label for="delta">Stall Penalty (δ)</label>
+            <input type="range" id="delta" min="0" max="2" step="0.1" value="0.3">
+            <span class="value" id="delta-value">0.3</span>
+          </div>
+        </div>
+        <div class="score-display">
+          <div class="score-label">Total Score</div>
+          <div class="score-value" id="total-score">0.0</div>
+        </div>
+      </section>
+
+      <section class="card metrics-panel">
+        <h2>System Metrics</h2>
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <div class="metric-label">Progress</div>
+            <div class="metric-value" id="progress">0.0</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Diversity</div>
+            <div class="metric-value" id="diversity">0.0</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Violations</div>
+            <div class="metric-value warning" id="violations">0</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Stalls</div>
+            <div class="metric-value warning" id="stalls">0</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Entropy</div>
+            <div class="metric-value" id="entropy">0.0</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Current Tick</div>
+            <div class="metric-value" id="tick">0</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card intent-log">
+        <h2>Intent Processing Log</h2>
+        <div class="log-controls">
+          <button id="clear-log">Clear Log</button>
+        </div>
+        <div class="log-container" id="intent-log">
+          <div class="log-entry">
+            <span class="log-time">00:00:00</span>
+            <span class="log-agent">Agent-001</span>
+            <span class="log-action">Move</span>
+            <span class="log-stage stage-jury">Jury ✓</span>
+            <span class="log-stage stage-judge">Judge ✓</span>
+            <span class="log-stage stage-exec">Executioner ⏳</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card adventurer-status">
+        <h2>Active Adventurers</h2>
+        <div class="adventurer-list" id="adventurer-list">
+          <div class="adventurer-card">
+            <div class="adventurer-header">
+              <span class="adventurer-class">Warrior</span>
+              <span class="adventurer-level">Lv. 3</span>
+            </div>
+            <div class="adventurer-stats">
+              <div class="stat-bar">
+                <span class="stat-label">HP</span>
+                <div class="bar">
+                  <div class="bar-fill hp" style="width: 80%;"></div>
+                </div>
+                <span class="stat-value">80/100</span>
+              </div>
+              <div class="stat-bar">
+                <span class="stat-label">Stamina</span>
+                <div class="bar">
+                  <div class="bar-fill stamina" style="width: 60%;"></div>
+                </div>
+                <span class="stat-value">60/100</span>
+              </div>
+            </div>
+            <div class="adventurer-info">
+              <span class="room-location">Room: corridor-3</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ml-predictions">
+        <h2>Survival Predictions</h2>
+        <div class="prediction-container" id="predictions">
+          <div class="prediction-item">
+            <div class="prediction-header">
+              <span class="agent-name">Warrior-001</span>
+              <span class="risk-badge risk-medium">Medium Risk</span>
+            </div>
+            <div class="prediction-stats">
+              <div class="stat-row">
+                <span class="stat-name">Survival Probability</span>
+                <span class="stat-number">64%</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">Expected Gold</span>
+                <span class="stat-number">145</span>
+              </div>
+            </div>
+            <div class="recommendations">
+              <div class="recommendation">Low health detected. Avoid combat encounters.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card automation-rules">
+        <h2>Automation Rules</h2>
+        <div class="rule-list" id="rule-list">
+          <div class="rule-item">
+            <input type="checkbox" id="rule-1" checked>
+            <label for="rule-1">
+              <span class="rule-name">Spawn monster when room empty</span>
+              <span class="rule-priority">Priority: 5</span>
+            </label>
+          </div>
+          <div class="rule-item">
+            <input type="checkbox" id="rule-2" checked>
+            <label for="rule-2">
+              <span class="rule-name">Repair traps after trigger</span>
+              <span class="rule-priority">Priority: 3</span>
+            </label>
+          </div>
+          <div class="rule-item">
+            <input type="checkbox" id="rule-3" checked>
+            <label for="rule-3">
+              <span class="rule-name">Balance difficulty every 10 ticks</span>
+              <span class="rule-priority">Priority: 2</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card dungeon-map">
+        <h2>Dungeon Layout</h2>
+        <canvas id="dungeon-canvas" width="600" height="400"></canvas>
+      </section>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

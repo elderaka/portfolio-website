@@ -1,0 +1,293 @@
+{
+  "education": [
+    {
+      "institution": "Telkom University",
+      "degree": "Informatics Undergraduate",
+      "gpa": "3.87",
+      "period": "September 2022 - January 2026",
+      "location": "Bandung, West Java",
+      "courses": [
+        "Object-Oriented Programming",
+        "Data Structures & Algorithms",
+        "Machine Learning",
+        "Artificial Intelligence",
+        "Natural Language Processing",
+        "Database Systems",
+        "Web Development",
+        "Software Engineering",
+        "Computer Networks",
+        "Cloud Computing",
+        "Data Visualization",
+        "Deep Learning",
+        "Distributed Systems",
+        "API Design & Development",
+        "DevOps & CI/CD",
+        "Agile Methodologies"
+      ]
+    }
+  ],
+  "professional_experience": [
+    {
+      "role": "Fullstack Developer",
+      "company": "Pt. Elnusa Fabrikasi Konstruksi",
+      "period": "September 2025 - December 2025",
+      "location": "Jakarta Selatan, DKI Jakarta",
+      "description": "Developed a full-stack job portal using Vue.js, Express.js, and PostgreSQL. Integrated Gemini-powered assessment engine for candidate filtering and implemented MFA.",
+      "stack": ["Vue.js", "Express.js", "PostgreSQL", "Gemini API", "MFA"]
+    },
+    {
+      "role": "Laboratory Assistant",
+      "company": "Informatics Lab, Telkom University",
+      "period": "February 2025 - September 2025",
+      "location": "Bandung, West Java",
+      "description": "Led practical lab sessions for OOP and Operating Systems concepts for 2nd and 3rd-year students.",
+      "stack": ["OOP", "Operating Systems"]
+    },
+    {
+      "role": "Backend Developer",
+      "company": "Humic Laboratory, Telkom University",
+      "period": "September 2024 - November 2024",
+      "location": "Bekasi, West Java",
+      "description": "Developed a CMS for ICICYTA conference scheduling website.",
+      "stack": ["Laravel", "PHP"]
+    },
+    {
+      "role": "Fullstack Developer",
+      "company": "Pt. Sintesa Inti Prestasi",
+      "period": "July 2024 - September 2024",
+      "location": "Bekasi, West Java",
+      "description": "Developed school admission (PPDB) system. Authored technical documentation for telemedicine projects.",
+      "stack": ["Laravel", "Quasar", "Vue.js", "Git"]
+    }
+  ],
+  "organizational_experience": [
+    {
+      "role": "Teaching Assistant",
+      "organization": "Telkom University",
+      "period": "January 2024 - Present",
+      "description": "Mentored 40+ students in Discrete Mathematics and Data Structure courses."
+    },
+    {
+      "role": "Head of Games and Gadget Division",
+      "organization": "Central Computer Improvement",
+      "period": "November 2023 - November 2024",
+      "description": "Coordinated Game Development activities and projects."
+    },
+    {
+      "role": "Mentor",
+      "organization": "KONTENT HIMA IF",
+      "period": "October 2023 - August 2025",
+      "description": "Provided technical guidance in Golang for new students."
+    },
+    {
+      "role": "Member",
+      "organization": "Advanced Software Engineering Laboratory",
+      "period": "November 2023 - Present",
+      "description": "Applied SE principles to visual media and game development projects."
+    }
+  ],
+  "publications": [
+    {
+      "title": "Jury, Judge, and Executioner: Using LLMs to Steer Gamified Multi-Agent Decision-Making",
+      "type": "Conference Paper",
+      "year": "2025",
+      "venue": "2025 2nd Beyond Technology Summit on Informatics International Conference (BTS-I2C)",
+      "date": "December 18, 2025",
+      "location": "Jember, Indonesia (Hybrid)",
+      "publisher": "IEEE Xplore",
+      "authors": "Lauda Dhia Raka, Kemas Muslim Lhaksmana",
+      "institution": "Telkom University, Bandung, Indonesia",
+      "description": "A language-conditioned control loop for LLM multi-agent systems that separates proposing from executing actions through three governance gates: Jury, Judge, and Executioner. Achieves 76% task success rate with reduced violations in a gamified D&D environment."
+    }
+  ],
+  "contact": {
+    "email": "laudadraka@gmail.com",
+    "phone": "+62 xxx xxxx xxxx",
+    "linkedin": "https://linkedin.com/in/laudadraka",
+    "github": "https://github.com/elderaka",
+    "location": "Bandung, West Java, Indonesia",
+    "availability": "Available for opportunities "
+  },
+  "projects": [
+    {
+      "title": "Dungeon Governor",
+      "category": "System Showcase",
+      "tech": "TypeScript / SQLite",
+      "description": "Automated dungeon control with validation gates, multi-agent coordination, and ML predictions.",
+      "tags": ["web-dev", "ml-ai"]
+    },
+    {
+      "title": "LMS EFK",
+      "category": "Agentic AI",
+      "tech": "Vue.js / Node.js",
+      "description": "Autonomous course creation and grading engine.",
+      "tags": ["web-dev", "ml-ai"]
+    },
+    {
+      "title": "UK Cobenefit",
+      "category": "Data Vis",
+      "tech": "MapLibre / PMTiles",
+      "description": "Hierarchical geographic visualization for net-zero advocacy.",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "MASONRY",
+      "category": "Game Sim",
+      "tech": "Unity / C#",
+      "description": "Collective NPC behavior modeling in 3D ecosystems.",
+      "url": "https://github.com/elderaka/MASONRY-Multi-Agent-Simulation-Of-NPC-in-Minecraft-ecosYstem",
+      "tags": ["game-dev", "ml-ai"]
+    },
+    {
+      "title": "Nirwana Pancarona",
+      "category": "Indie Game",
+      "tech": "GameMaker",
+      "description": "Bullet hell mechanics with tuned boss state machines.",
+      "tags": ["game-dev"]
+    },
+    {
+      "title": "HireIT AI",
+      "category": "Multi-Agent",
+      "tech": "Watsonx",
+      "description": "Recruitment automation pipeline with multi-agent orchestration.",
+      "url": "https://github.com/elderaka/HireIT-AI",
+      "tags": ["ml-ai", "web-dev"]
+    },
+    {
+      "title": "Personality CLF",
+      "category": "ML",
+      "tech": "Python / Sklearn",
+      "description": "Text analysis model for personality prediction.",
+      "url": "https://github.com/elderaka/MBTI-Personality-Classification-Based-on-Analysis-Text-with-TF-IDF",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Portfolio Website",
+      "category": "Web",
+      "tech": "TypeScript",
+      "description": "Primary portfolio site codebase.",
+      "url": "https://github.com/elderaka/portfolio-website",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "ECCI Data Visualization",
+      "category": "Data Vis",
+      "tech": "TypeScript",
+      "description": "Interactive visualization work for ECCI datasets.",
+      "url": "https://github.com/elderaka/ECCI-Data-Visualization",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "LLM Agent White-Boxed",
+      "category": "AI Research",
+      "tech": "Python",
+      "description": "White-boxed agent experimentation and analysis.",
+      "url": "https://github.com/elderaka/LLM-Agent-White-Boxed",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Data Structure Tree",
+      "category": "CS",
+      "tech": "JavaScript",
+      "description": "Data structure exploration and visual logic.",
+      "url": "https://github.com/elderaka/datastructure-tree",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "Unity Compfest 17",
+      "category": "Game Dev",
+      "tech": "C#",
+      "description": "Unity project for Compfest 17.",
+      "url": "https://github.com/elderaka/Unity-Compfest-17",
+      "tags": ["game-dev"]
+    },
+    {
+      "title": "Menilai Buku dari Sampulnya",
+      "category": "ML",
+      "tech": "Jupyter",
+      "description": "Book cover analysis experiments.",
+      "url": "https://github.com/elderaka/menilai-buku-dari-sampulnya",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Reddit MBTI Scraper",
+      "category": "Data",
+      "tech": "Python",
+      "description": "Scraper for MBTI-related subreddit data.",
+      "url": "https://github.com/elderaka/Reddit-MBTI-Scraper",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Humic ICICyTA 2024",
+      "category": "Research",
+      "tech": "Python",
+      "description": "Research artifacts for ICICyTA 2024.",
+      "url": "https://github.com/elderaka/Humic-ICICyTA-2024",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Single Agent Reinforcement Learning",
+      "category": "RL",
+      "tech": "Python",
+      "description": "Single-agent RL experiments and baselines.",
+      "url": "https://github.com/elderaka/Single-Agent-Reinforcement-Learning",
+      "tags": ["ml-ai"]
+    },
+    {
+      "title": "Travel-U Mobile App",
+      "category": "Mobile",
+      "tech": "Vue",
+      "description": "Travel app client for group project.",
+      "url": "https://github.com/elderaka/mobileapp-travel-u-kelompok-2",
+      "tags": ["mobile-dev"]
+    },
+    {
+      "title": "Travel-U Backend",
+      "category": "Backend",
+      "tech": "Java",
+      "description": "Backend service for Travel-U.",
+      "url": "https://github.com/elderaka/travelu.backend",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "Travel-U Backend (Legacy)",
+      "category": "Backend",
+      "tech": "PHP",
+      "description": "Legacy backend service for Travel-U.",
+      "url": "https://github.com/elderaka/travelu.backend.old",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "PPDB Docs",
+      "category": "Docs",
+      "tech": "Docs",
+      "description": "Documentation site for PPDB.",
+      "url": "https://github.com/elderaka/ppdb.docs.id",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "InternPro",
+      "category": "Game Dev",
+      "tech": "GDScript",
+      "description": "Godot prototype experiments.",
+      "url": "https://github.com/elderaka/internpro",
+      "tags": ["game-dev"]
+    },
+    {
+      "title": "Concenial Umbrella",
+      "category": "Utility",
+      "tech": "Misc",
+      "description": "Utility sandbox project.",
+      "url": "https://github.com/elderaka/congenial-umbrella",
+      "tags": ["web-dev"]
+    },
+    {
+      "title": "Paraindigo",
+      "category": "Compiler",
+      "tech": "Yacc",
+      "description": "Parser experiment work.",
+      "url": "https://github.com/elderaka/paraindigo",
+      "tags": ["ml-ai"]
+    }
+  ]
+}
