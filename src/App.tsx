@@ -854,10 +854,10 @@ function App() {
             </div>
           </a>
           
-          {/* Theme Toggle Switch */}
+          {/* Theme Toggle Switch - Desktop Only */}
           <button
             onClick={handleThemeToggle}
-            className="relative w-14 h-7 rounded-full transition-colors"
+            className="relative w-14 h-7 rounded-full transition-colors hidden sm:flex items-center justify-center"
             style={{ 
               backgroundColor: theme === 'deep-focus' ? 'var(--theme-accent)' : 'var(--theme-muted)',
             }}
@@ -876,6 +876,26 @@ function App() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Theme Toggle Switch - Mobile Only */}
+          <button
+            onClick={handleThemeToggle}
+            className="relative w-14 h-7 rounded-full transition-colors sm:hidden"
+            style={{ 
+              backgroundColor: theme === 'deep-focus' ? 'var(--theme-accent)' : 'var(--theme-muted)',
+            }}
+            aria-label="Toggle theme"
+          >
+            <span 
+              className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300"
+              style={{ 
+                backgroundColor: 'var(--theme-bg)',
+                transform: theme === 'deep-focus' ? 'translateX(28px)' : 'translateX(0)',
+              }}
+            >
+              {theme === 'deep-focus' ? <Moon size={14} style={{ color: 'var(--theme-accent)' }} /> : <Sun size={14} style={{ color: 'var(--theme-accent)' }} />}
+            </span>
+          </button>
+          
           <div className="hidden sm:flex gap-3 font-mono text-[10px] uppercase font-bold">
             <a 
               href="#lab" 
