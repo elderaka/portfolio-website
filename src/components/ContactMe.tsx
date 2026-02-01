@@ -4,11 +4,12 @@ import personalData from '../personal-data.json'
 export const ContactMe = () => {
   return (
     <section id="contact" className="mb-24 scroll-snap-align-start transition-all duration-700 opacity-0 translate-y-8 [&.section-visible]:opacity-100 [&.section-visible]:translate-y-0">
-      <div className="border-2 p-6 sm:p-12 relative overflow-hidden" style={{ borderColor: 'var(--theme-border)', background: `linear-gradient(135deg, var(--theme-surface), var(--theme-surface-hover))` }}>
+      <div className="border-2 p-6 sm:p-12 relative overflow-hidden" style={{ borderColor: 'var(--theme-border)', background: 'linear-gradient(135deg, var(--contact-bg-start), var(--contact-bg-end))' }}>
         {/* Grid Pattern Background */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'linear-gradient(#b0aca5 1px, transparent 1px), linear-gradient(90deg, #b0aca5 1px, transparent 1px)',
+          backgroundSize: '20px 20px',
+          opacity: 'var(--theme-grid-opacity, 0.05)'
         }}></div>
 
         <div className="relative z-10">
@@ -17,10 +18,10 @@ export const ContactMe = () => {
             <div className="inline-block px-3 py-1.5 sm:px-4 sm:py-2 font-mono text-[10px] sm:text-xs uppercase font-bold mb-4 sm:mb-6 section-accent-badge">
               OPEN FOR OPPORTUNITIES
             </div>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-3 sm:mb-4" style={{ color: 'var(--theme-text)' }}>
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight mb-3 sm:mb-4" style={{ color: 'var(--contact-text)' }}>
               Let's Build Something
             </h3>
-            <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4" style={{ color: 'var(--theme-muted)' }}>
+            <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4" style={{ color: 'var(--contact-text-muted)' }}>
               Available for full-time positions, freelance projects, and technical collaborations
             </p>
           </div>
@@ -41,7 +42,7 @@ export const ContactMe = () => {
                   Email
                 </span>
               </div>
-              <p className="font-mono text-xs sm:text-sm break-all" style={{ color: 'var(--theme-text)' }}>{personalData.contact.email}</p>
+              <p className="font-mono text-xs sm:text-sm break-all transition-colors group-hover:" style={{ color: 'var(--contact-text)', '--contact-hover-color': 'var(--contact-text-hover)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--contact-text-hover)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--contact-text)'}>{personalData.contact.email}</p>
             </a>
 
             {/* GitHub */}
@@ -60,7 +61,7 @@ export const ContactMe = () => {
                   GitHub
                 </span>
               </div>
-              <p className="font-mono text-xs sm:text-sm" style={{ color: 'var(--theme-text)' }}>@elderaka</p>
+              <p className="font-mono text-xs sm:text-sm transition-colors" style={{ color: 'var(--contact-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--contact-text-hover)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--contact-text)'}>@elderaka</p>
             </a>
 
             {/* LinkedIn */}
@@ -79,7 +80,7 @@ export const ContactMe = () => {
                   LinkedIn
                 </span>
               </div>
-              <p className="font-mono text-xs sm:text-sm" style={{ color: 'var(--theme-text)' }}>/in/laudadraka</p>
+              <p className="font-mono text-xs sm:text-sm transition-colors" style={{ color: 'var(--contact-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--contact-text-hover)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--contact-text)'}>/in/laudadraka</p>
             </a>
 
             {/* Location */}
@@ -92,7 +93,7 @@ export const ContactMe = () => {
                   Location
                 </span>
               </div>
-              <p className="font-mono text-xs sm:text-sm" style={{ color: 'var(--theme-text)' }}>{personalData.contact.location}</p>
+              <p className="font-mono text-xs sm:text-sm" style={{ color: 'var(--contact-text)' }}>{personalData.contact.location}</p>
             </div>
           </div>
 
@@ -106,7 +107,7 @@ export const ContactMe = () => {
                 <p className="font-mono text-[10px] sm:text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--theme-accent)' }}>
                   Current Status
                 </p>
-                <p className="text-base sm:text-lg font-bold" style={{ color: 'var(--theme-text)' }}>
+                <p className="text-base sm:text-lg font-bold" style={{ color: 'var(--contact-text)' }}>
                   {personalData.contact.availability}
                 </p>
               </div>
@@ -116,7 +117,7 @@ export const ContactMe = () => {
           {/* Quick Contact Form Placeholder */}
           <div className="mt-8 sm:mt-12 pt-8 sm:pt-12" style={{ borderTop: `1px solid var(--theme-border)` }}>
             <div className="max-w-2xl mx-auto text-center px-4">
-              <p className="text-sm sm:text-base mb-6 sm:mb-8" style={{ color: 'var(--theme-muted)' }}>
+              <p className="text-sm sm:text-base mb-6 sm:mb-8" style={{ color: 'var(--contact-text-muted)' }}>
                 Prefer a quick message? Send me an email and I'll get back to you within 24 hours.
               </p>
               <a

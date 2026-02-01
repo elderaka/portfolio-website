@@ -21,6 +21,7 @@
   --theme-nav-active-text: #ffffff;
   --theme-orb: #ffb000;
   --theme-ripple: rgba(255, 176, 0, 0.3);
+  --theme-grid-opacity: 0.05;
   
   color: var(--theme-text);
   background-color: var(--theme-bg);
@@ -42,6 +43,24 @@
   --theme-nav-active-text: #0f172a;
   --theme-orb: #60a5fa;
   --theme-ripple: rgba(96, 165, 250, 0.3);
+  --theme-grid-opacity: 0.15;
+}
+
+/* Swap contact section background colors between themes */
+#contact {
+  --contact-bg-start: #1e293b;
+  --contact-bg-end: #0f172a;
+  --contact-text: #ffffff;
+  --contact-text-muted: #a0a0a0;
+  --contact-text-hover: #ffb000;
+}
+
+[data-theme="deep-focus"] #contact {
+  --contact-bg-start: #1e293b;
+  --contact-bg-end: #0f172a;
+  --contact-text: #ffffff;
+  --contact-text-muted: #ffffff;
+  --contact-text-hover: #60a5fa;
 }
 
 /* Theme overrides for legacy utility colors */
