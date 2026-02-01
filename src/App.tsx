@@ -18,13 +18,13 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import personalData from './personal-data.json'
-import { FullstackLab } from './components/labs/FullstackLab'
-import { GamedevLab } from './components/labs/GamedevLab'
-import { MultiAgentLab } from './components/labs/MultiAgentLab'
-import { AILab } from './components/labs/AILab'
-import { SQLiteLab } from './components/labs/SQLiteLab'
-import { MLLab } from './components/labs/MLLab'
-import { AutomationLab } from './components/labs/AutomationLab'
+// import { FullstackLab } from './components/labs/FullstackLab'
+// import { GamedevLab } from './components/labs/GamedevLab'
+// import { MultiAgentLab } from './components/labs/MultiAgentLab'
+// import { AILab } from './components/labs/AILab'
+// import { SQLiteLab } from './components/labs/SQLiteLab'
+// import { MLLab } from './components/labs/MLLab'
+// import { AutomationLab } from './components/labs/AutomationLab'
 import { CareerHistory } from './components/CareerHistory'
 import { OrganizationHistory } from './components/OrganizationHistory'
 import { Publications } from './components/Publications'
@@ -111,8 +111,8 @@ function App() {
   const [isLabTransitioning, setIsLabTransitioning] = useState(false)
   const [isProjectTransitioning, setIsProjectTransitioning] = useState(false)
   const animationsEnabled = import.meta.env.VITE_ANIMATIONS_ENABLED !== 'false'
-  const [heroMaxWidths, setHeroMaxWidths] = useState<number[]>([0, 0, 0])
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
+  const [setHeroMaxWidths] = useState<number[]>([0, 0, 0])
+  // const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
   const [currentSection, setCurrentSection] = useState<string>('hero')
   const wheelRef = useRef<HTMLDivElement | null>(null)
