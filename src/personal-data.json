@@ -30,7 +30,7 @@
     {
       "role": "Fullstack Developer",
       "company": "Pt. Elnusa Fabrikasi Konstruksi",
-      "period": "September 2025 - December 2025",
+      "period": "September 2025 - January 2026",
       "location": "Jakarta Selatan, DKI Jakarta",
       "description": "Developed a full-stack job portal using Vue.js, Express.js, and PostgreSQL. Integrated Gemini-powered assessment engine for candidate filtering and implemented MFA.",
       "stack": ["Vue.js", "Express.js", "PostgreSQL", "Gemini API", "MFA"]
@@ -46,15 +46,15 @@
     {
       "role": "Backend Developer",
       "company": "Humic Laboratory, Telkom University",
-      "period": "September 2024 - November 2024",
+      "period": "September 2024 - December 2024",
       "location": "Bekasi, West Java",
       "description": "Developed a CMS for ICICYTA conference scheduling website.",
-      "stack": ["Laravel", "PHP"]
+      "stack": ["Laravel", "PHP", "React.js", "MySQL"]
     },
     {
       "role": "Fullstack Developer",
       "company": "Pt. Sintesa Inti Prestasi",
-      "period": "July 2024 - September 2024",
+      "period": "June 2024 - September 2024",
       "location": "Bekasi, West Java",
       "description": "Developed school admission (PPDB) system. Authored technical documentation for telemedicine projects.",
       "stack": ["Laravel", "Quasar", "Vue.js", "Git"]
@@ -64,7 +64,7 @@
     {
       "role": "Teaching Assistant",
       "organization": "Telkom University",
-      "period": "January 2024 - Present",
+      "period": "January 2024 - January 2026",
       "description": "Mentored 40+ students in Discrete Mathematics and Data Structure courses."
     },
     {
@@ -82,7 +82,7 @@
     {
       "role": "Member",
       "organization": "Advanced Software Engineering Laboratory",
-      "period": "November 2023 - Present",
+      "period": "November 2023 - January 2026",
       "description": "Applied SE principles to visual media and game development projects."
     }
   ],
@@ -110,13 +110,6 @@
   },
   "projects": [
     {
-      "title": "Dungeon Governor",
-      "category": "System Showcase",
-      "tech": "TypeScript / SQLite",
-      "description": "Automated dungeon control with validation gates, multi-agent coordination, and ML predictions.",
-      "tags": ["web-dev", "ml-ai"]
-    },
-    {
       "title": "LMS EFK",
       "category": "Agentic AI",
       "tech": "Vue.js / Node.js",
@@ -128,6 +121,7 @@
       "category": "Data Vis",
       "tech": "MapLibre / PMTiles",
       "description": "Hierarchical geographic visualization for net-zero advocacy.",
+      "url": "https://github.com/elderaka/ECCI-Data-Visualization",
       "tags": ["web-dev"]
     },
     {
@@ -143,6 +137,8 @@
       "category": "Indie Game",
       "tech": "GameMaker",
       "description": "Bullet hell mechanics with tuned boss state machines.",
+      
+      "url": "https://github.com/elderaka/paraindigo",
       "tags": ["game-dev"]
     },
     {
@@ -167,14 +163,6 @@
       "tech": "TypeScript",
       "description": "Primary portfolio site codebase.",
       "url": "https://github.com/elderaka/portfolio-website",
-      "tags": ["web-dev"]
-    },
-    {
-      "title": "ECCI Data Visualization",
-      "category": "Data Vis",
-      "tech": "TypeScript",
-      "description": "Interactive visualization work for ECCI datasets.",
-      "url": "https://github.com/elderaka/ECCI-Data-Visualization",
       "tags": ["web-dev"]
     },
     {
@@ -223,7 +211,7 @@
       "tech": "Python",
       "description": "Research artifacts for ICICyTA 2024.",
       "url": "https://github.com/elderaka/Humic-ICICyTA-2024",
-      "tags": ["ml-ai"]
+      "tags": ["web-dev"]
     },
     {
       "title": "Single Agent Reinforcement Learning",
@@ -234,60 +222,12 @@
       "tags": ["ml-ai"]
     },
     {
-      "title": "Travel-U Mobile App",
+      "title": "Travel-U",
       "category": "Mobile",
       "tech": "Vue",
       "description": "Travel app client for group project.",
       "url": "https://github.com/elderaka/mobileapp-travel-u-kelompok-2",
-      "tags": ["mobile-dev"]
-    },
-    {
-      "title": "Travel-U Backend",
-      "category": "Backend",
-      "tech": "Java",
-      "description": "Backend service for Travel-U.",
-      "url": "https://github.com/elderaka/travelu.backend",
-      "tags": ["web-dev"]
-    },
-    {
-      "title": "Travel-U Backend (Legacy)",
-      "category": "Backend",
-      "tech": "PHP",
-      "description": "Legacy backend service for Travel-U.",
-      "url": "https://github.com/elderaka/travelu.backend.old",
-      "tags": ["web-dev"]
-    },
-    {
-      "title": "PPDB Docs",
-      "category": "Docs",
-      "tech": "Docs",
-      "description": "Documentation site for PPDB.",
-      "url": "https://github.com/elderaka/ppdb.docs.id",
-      "tags": ["web-dev"]
-    },
-    {
-      "title": "InternPro",
-      "category": "Game Dev",
-      "tech": "GDScript",
-      "description": "Godot prototype experiments.",
-      "url": "https://github.com/elderaka/internpro",
-      "tags": ["game-dev"]
-    },
-    {
-      "title": "Concenial Umbrella",
-      "category": "Utility",
-      "tech": "Misc",
-      "description": "Utility sandbox project.",
-      "url": "https://github.com/elderaka/congenial-umbrella",
-      "tags": ["web-dev"]
-    },
-    {
-      "title": "Paraindigo",
-      "category": "Compiler",
-      "tech": "Yacc",
-      "description": "Parser experiment work.",
-      "url": "https://github.com/elderaka/paraindigo",
-      "tags": ["ml-ai"]
+      "tags": ["mobile-dev", "web-dev"]
     }
   ]
 }

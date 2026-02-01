@@ -3,7 +3,7 @@ import personalData from '../personal-data.json'
 
 export const Publications = () => {
   return (
-    <section id="publications" className="mb-24 scroll-snap-align-start">
+    <section id="publications" className="mb-24 scroll-snap-align-start transition-all duration-700 opacity-0 translate-y-8 [&.section-visible]:opacity-100 [&.section-visible]:translate-y-0">
       <div className="mb-12">
         <div className="flex items-center gap-4 mb-4">
           <div className="p-3 bg-stone-900 text-amber-500">
