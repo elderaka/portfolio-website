@@ -111,8 +111,19 @@ function App() {
   const [isProjectTransitioning, setIsProjectTransitioning] = useState(false)
   const animationsEnabled = import.meta.env.VITE_ANIMATIONS_ENABLED !== 'false'
   // const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
+  const [isDesktop, setIsDesktop] = useState(false)
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
   const [currentSection, setCurrentSection] = useState<string>('hero')
+  const [ambientOrbs, setAmbientOrbs] = useState<Array<{
+    id: number
+    x: number
+    y: number
+    size: number
+    targetX: number
+    targetY: number
+    targetSize: number
+  }>>([]);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const wheelRef = useRef<HTMLDivElement | null>(null)
   const dragStartAngleRef = useRef(0)
   const dragStartRotationRef = useRef(0)
@@ -134,6 +145,8 @@ function App() {
     { icon: Cpu, label: 'Agentic AI' },
   ], [])
 
+  const wheelOrder = useMemo(() => [0, 1, 3, 2], [])
+
   useEffect(() => {
     const timer = setTimeout(() => setBooted(true), 1000)
     return () => clearTimeout(timer)
@@ -144,6 +157,26 @@ function App() {
     const timer = setTimeout(() => setShowLoader(false), 600)
     return () => clearTimeout(timer)
   }, [booted])
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 768px)')
+    const handleChange = () => setIsDesktop(media.matches)
+    handleChange()
+
+    if (media.addEventListener) {
+      media.addEventListener('change', handleChange)
+    } else {
+      media.addListener(handleChange)
+    }
+
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener('change', handleChange)
+      } else {
+        media.removeListener(handleChange)
+      }
+    }
+  }, [])
 
   // Section intersection observer for animations
   useEffect(() => {
@@ -183,7 +216,7 @@ function App() {
     }
   }, [])
 
-  // Custom cursor tracking
+  // Click ripple effect
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const ripple = document.createElement('div')
@@ -202,12 +235,112 @@ function App() {
     }
   }, [])
 
-  const heroTexts = useMemo(() => [
+  // Cursor tracking for orb magnetism
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setCursorPos({ x: e.clientX, y: e.clientY })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // Ambient Orbs
+  useEffect(() => {
+    let orbIdCounter = 0
+
+    const spawnOrb = () => {
+      const id = orbIdCounter++
+      const size = Math.random() * 200 + 100 // 100-300px
+      const x = Math.random() * window.innerWidth
+      const y = Math.random() * window.innerHeight
+
+      const newOrb = {
+        id,
+        x,
+        y,
+        size,
+        targetX: x,
+        targetY: y,
+        targetSize: size,
+      }
+
+      setAmbientOrbs((prev) => [...prev, newOrb])
+
+      // Orb lifetime
+      const lifetime = Math.random() * 7000 + 8000
+      const deathTimer = setTimeout(() => {
+        setAmbientOrbs((prev) => prev.filter((o) => o.id !== id))
+      }, lifetime)
+
+      return deathTimer
+    }
+
+    const spawnInterval = setInterval(() => {
+      spawnOrb()
+    }, Math.random() * 4000 + 3000)
+
+    const animationFrame = setInterval(() => {
+      setAmbientOrbs((prev) =>
+        prev.map((orb) => {
+          const dx = cursorPos.x - orb.x
+          const dy = cursorPos.y - orb.y
+          const distToCursor = Math.sqrt(dx * dx + dy * dy)
+          const magneticRadius = 300
+
+          // If orb is within magnetic radius, attract it to cursor
+          if (distToCursor < magneticRadius) {
+            orb.targetX = cursorPos.x + (Math.random() - 0.5) * 50 
+            orb.targetY = cursorPos.y + (Math.random() - 0.5) * 50
+          } else if (Math.random() < 0.05) {
+            // Otherwise, randomly pick new target
+            orb.targetX = Math.random() * window.innerWidth
+            orb.targetY = Math.random() * window.innerHeight
+            orb.targetSize = Math.random() * 200 + 100
+          }
+
+          const targetDx = orb.targetX - orb.x
+          const targetDy = orb.targetY - orb.y
+          const ds = orb.targetSize - orb.size
+
+          return {
+            ...orb,
+            x: orb.x + targetDx * 0.02,
+            y: orb.y + targetDy * 0.02,
+            size: orb.size + ds * 0.03,
+          }
+        })
+      )
+    }, 50)
+
+    // Initial spawn
+    spawnOrb()
+    spawnOrb()
+
+    return () => {
+      clearInterval(spawnInterval)
+      clearInterval(animationFrame)
+    }
+  }, [])
+
+  const MobileHeroTexts = useMemo(() => [
     ['Fullstack', 'Engineer', '& Architect'],
+    ['Game', 'Development', '& Ideation'],
     ['Development', 'Security', '& Operation'],
     ['Machine', 'Learning', '& Applied AI'],
+  ], [])
+
+  const DesktopHeroTexts = useMemo(() => [
+    ['Fullstack', 'Engineer', '& Architect'],
+    ['Machine', 'Learning', '& Applied AI'],
+    ['Development', 'Security', '& Operation'],
     ['Game', 'Development', '& Ideation'],
   ], [])
+
+  const heroTexts = useMemo(
+    () => (isDesktop ? DesktopHeroTexts : MobileHeroTexts),
+    [isDesktop, DesktopHeroTexts, MobileHeroTexts]
+  )
 
   useEffect(() => {
     if (!animationsEnabled) return
@@ -218,7 +351,6 @@ function App() {
         setHeroTextIndex(nextIndex)
         setIsTransitioning(false)
         
-        // Rotate wheel using reset animation logic
         if (inertiaRef.current !== null) {
           cancelAnimationFrame(inertiaRef.current)
           inertiaRef.current = null
@@ -231,7 +363,6 @@ function App() {
         wobbleAmplitudeRef.current = 0
         setWheelWobble(0)
 
-        // Calculate target angle: 0° (Fullstack), 90° (Game), 180° (DevSecOps), 270° (ML/AI)
         const targetOffset = nextIndex * 90
         const baseTarget = Math.floor(wheelAngle / 360) * 360 + targetOffset
         const candidates = [baseTarget, baseTarget + 360, baseTarget - 360]
@@ -296,14 +427,12 @@ function App() {
     wobbleAmplitudeRef.current = 0
     setWheelWobble(0)
 
-    // Find nearest 90-degree position in full rotation history
     const cardinalOffsets = [0, 90, 180, 270]
     
     let targetAngle = wheelAngle
     let minDistance = Infinity
 
     for (const offset of cardinalOffsets) {
-      // Generate candidate angles (current rotation + offset, and full rotations around it)
       const baseTarget = Math.floor(wheelAngle / 360) * 360 + offset
       const candidates = [baseTarget, baseTarget + 360, baseTarget - 360]
       
@@ -367,13 +496,11 @@ function App() {
         inertiaRef.current = null
         setWheelWobble(0)
         
-        // Auto-adjust after 1 second to match current hero text angle
         autoAdjustTimeoutRef.current = window.setTimeout(() => {
           if (resetAnimRef.current !== null) {
             cancelAnimationFrame(resetAnimRef.current)
           }
 
-          // Calculate target angle based on current hero text
           const targetOffset = heroTextIndex * 90
           const baseTarget = Math.floor(wheelAngle / 360) * 360 + targetOffset
           const candidates = [baseTarget, baseTarget + 360, baseTarget - 360]
@@ -433,47 +560,47 @@ function App() {
       fullstack: {
         title: 'Fullstack Systems',
         description:
-          "I build end-to-end architectures with a focus on stability and clarity. My stack leans on Node.js and Golang with frontends in React/Vue, backed by Postgres for data that has to last. Demo includes an admin dashboard for game analytics.",
+          "I build end-to-end architectures with a focus on stability and clarity. My stack leans on Node.js, PHP, Java, and Golang with frontends in React/Vue, backed by Postgres for data that has to last. I adapt quickly to new frameworks and tools as project needs evolve.",
         stack:
-          'Node.js, Golang, TypeScript, JavaScript, React, Next.js, Remix, Vue, Nuxt, Svelte, SvelteKit, Astro, Tailwind CSS, Vite, Webpack, Storybook, REST, GraphQL, tRPC, Prisma, Drizzle, PostgreSQL, MySQL, MongoDB, Redis, Supabase, Firebase, Docker, Kubernetes, CI/CD',
+          'Node.js, Golang, TypeScript, JavaScript, React, Next.js, Vue, Nuxt, Svelte, SvelteKit, Express, FastAPI, Flask, Django, Laravel, SpringBoot, Astro, Tailwind CSS, Vite, Webpack, Storybook, REST, PostgreSQL, MySQL, MongoDB, Redis, Supabase, Firebase, Docker, Kubernetes, CI/CD',
       },
       gamedev: {
         title: 'Game Engineering',
         description:
-          "I craft interactive experiences across multiple engines and frameworks, from 2D browser games to full 3D environments. I adapt quickly to new game engines and tooling, whether it's Unity, Unreal, or web-based solutions. Demo showcases a dungeon management roguelike.",
+          "I craft interactive experiences across multiple engines and frameworks, from 2D browser games to full 3D environments. I adapt quickly to new game engines and tooling, whether it's Unity, Godot, or web-based solutions. My favorite game project features procedural dungeon generation and dynamic AI agents.",
         stack:
-          'Canvas API, WebGL, TypeScript, C#, C++, Unity, Unreal Engine, Godot, GameMaker Studio, Phaser, PIXI.js, Three.js, ECS, Pathfinding, Finite State Machines, Physics',
+          'C#, C++, Unity, Unreal Engine, Godot, GameMaker Studio, RenPy, RPGMaker, Three.js, ECS, Pathfinding, Finite State Machines, Physics',
       },
       mas: {
         title: 'Multi-Agent Systems',
         description:
-          "I design autonomous agent architectures with emergent behaviors and coordination patterns. My approach balances complexity with maintainability, and I'm comfortable learning new frameworks or implementing custom solutions as projects demand. Demo features intelligent dungeon explorers.",
+          "I design autonomous agent architectures with emergent behaviors and coordination patterns. My approach balances complexity with maintainability, and I'm comfortable learning new frameworks or implementing custom solutions as projects demand.",
         stack:
           'Agent Logic, Behavior Trees, State Machines, Utility AI, BDI, Monte Carlo Tree Search, GOAP, Simulation, Planning, Coordination Protocols',
       },
       ai: {
         title: 'Applied AI (RAG + LLM Ops)',
         description:
-          "I design AI systems that can actually be shipped: strict input handling, realistic performance, and outputs users can trust. The goal is always usable intelligence, not just a demo.",
+          "I design AI systems that can actually be shipped. Whether it need strict input handling, realistic performance, and outputs users can trust. I build end-to-end AI solutions using RAG, vector databases, and prompt engineering to deliver real value.",
         stack:
-          'Python, TypeScript, Gemini, OpenAI, Anthropic, LangChain, LlamaIndex, RAG, Vector DBs (Pinecone, Weaviate, Qdrant), Embeddings, Prompt Engineering, Tooling, Guardrails, Evaluations, Observability',
+          'Gemini, OpenAI, Anthropic, LangChain, LlamaIndex, RAG, Vector DBs (Pinecone, Weaviate, Qdrant), Embeddings, Prompt Engineering',
       },
       n8n: {
         title: 'System Automation',
         description:
-          "I build workflow automations that connect systems and reduce manual overhead. Whether it's no-code platforms like n8n and Zapier or custom scripting, I quickly adapt to whatever tooling best fits the use case. Demo automates dungeon management logic.",
+          "I build workflow automations that connect systems and reduce manual overhead. Whether it's no-code platforms like n8n and Zapier or custom scripting, I quickly adapt to whatever tooling best fits the use case. My favorite project automated data syncing between multiple SaaS platforms using n8n.",
         stack: 'n8n, Zapier, Make, Webhooks, Cron, Event Queues, API Integration, OAuth, WebSockets',
       },
       sqlite: {
-        title: 'SQLite Ops',
+        title: 'Database Engineering',
         description:
-          "I work with data storage solutions ranging from embedded SQLite to full-scale relational databases. I'm comfortable with schema design, query optimization, and adapting to different database paradigms as needed. Demo features in-browser SQLite with real-time queries.",
-        stack: 'SQLite, SQL.js, WASM, IndexedDB, DuckDB, Postgres, SQL, Query Optimization, Schema Design',
+          "I work with data storage solutions ranging from embedded SQLite to full-scale relational databases. I'm comfortable with schema design, query optimization, and adapting to different database paradigms as needed. My favorite project involved building a custom data storage layer using SQL.js for offline-first web applications.",
+        stack: 'SQLite, SQL.js, WASM, IndexedDB, DuckDB, Postgres, SQL, MongoDB, Redis, VectorDBs',
       },
       ml: {
         title: 'Machine Learning',
         description:
-          "I develop practical ML models focused on real-world deployment and measurable outcomes. My experience spans classical ML to neural networks, and I adapt quickly to new libraries and frameworks as the field evolves. Demo includes XGBoost predictor trained on 2,500+ runs.",
+          "I develop practical ML models focused on real-world deployment and measurable outcomes. My experience spans classical ML to neural networks, and I adapt quickly to new libraries and frameworks as the field evolves. My favorite project involved time series forecasting using LSTM networks.",
         stack:
           'XGBoost, LightGBM, Sklearn, TensorFlow, PyTorch, TensorFlow.js, Feature Engineering, Time Series, Model Serving, MLOps, Experiment Tracking',
       },
@@ -514,6 +641,22 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#F4F1EA] text-[#2C2C2C] font-sans selection:bg-amber-400 scroll-smooth">
+      {/* Ambient Orbs */}
+      {ambientOrbs.map((orb) => (
+        <div
+          key={orb.id}
+          className="ambient-orb"
+          style={{
+            width: `${orb.size}px`,
+            height: `${orb.size}px`,
+            background: '#FFB000',
+            left: `${orb.x}px`,
+            top: `${orb.y}px`,
+            opacity: 0.15,
+            transition: 'all 0.1s linear',
+          }}
+        />
+      ))}
       {showLoader && (
         <div className={`loader-screen${booted ? ' loader-fade' : ''}`} role="status" aria-live="polite">
           <div className="loader-diamond">
@@ -604,7 +747,7 @@ function App() {
         </div>
       </nav>
 
-      <main className="w-full sm:max-w-6xl sm:mx-auto px-4 sm:px-6 pb-12">
+      <main className="w-full sm:max-w-6xl sm:mx-auto px-4 sm:px-6 pb-12 relative z-10">
         <section id="hero" className={`grid grid-cols-12 md:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="col-span-12 md:col-span-7 order-1 flex flex-col justify-center text-center md:text-left items-center md:items-start min-w-0">
             <div className="hidden sm:inline-block px-2 py-1 bg-stone-200 font-mono text-[10px] uppercase mb-6">An aspiring Informatics Enthusiast with high Ambition</div>
@@ -633,7 +776,7 @@ function App() {
               </span>
             </h2>
             <p className="text-base sm:text-lg lg:text-xl text-stone-600 max-w-xl leading-relaxed mb-8">
-              I design full-stack systems where AI, data, and gameplay logic meet. My work is practical, fast, and tuned for real users.
+              I design full-stack systems where AI, data, and logic meet. My work is practical, fast, and tuned for real users.
             </p>
             <div className="flex gap-4">
               <a
@@ -727,7 +870,8 @@ function App() {
                 {/* Static highlight layer - DOES NOT ROTATE, clip-path stays at top-left */}
                 <div className="wheel-static-highlight">
                   <div className="wheel-static-rotor" style={{ transform: `rotate(${wheelAngle + wheelWobble}deg)` }}>
-                    {wheelItems.map((item, index) => {
+                    {wheelOrder.map((itemIndex, index) => {
+                      const item = wheelItems[itemIndex]
                       const Icon = item.icon
                       return (
                         <div key={`static-${index}`} className="wheel-item" style={{ transform: `rotate(${-wheelAngle - wheelWobble}deg)` }}>
@@ -743,7 +887,8 @@ function App() {
                 
                 {/* Rotating wheel layer - normal colors */}
                 <div className="wheel-rotor" style={{ transform: `rotate(${wheelAngle + wheelWobble}deg)` }}>
-                  {wheelItems.map((item, index) => {
+                  {wheelOrder.map((itemIndex, index) => {
+                    const item = wheelItems[itemIndex]
                     const Icon = item.icon
                     return (
                       <div key={index} className="wheel-item" style={{ transform: `rotate(${-wheelAngle - wheelWobble}deg)` }}>
@@ -791,6 +936,9 @@ function App() {
             </div>
             <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
               Technical Capabilities
+            </p>
+            <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
+              //TODO: Add interactive lab demos
             </p>
           </div>
 {/* <div className="grid grid-cols-12 border border-stone-300 bg-white min-h-[720px] shadow-2xl overflow-hidden">
@@ -867,7 +1015,7 @@ function App() {
               <h3 className="text-4xl font-bold uppercase tracking-tight">Project Archive</h3>
             </div>
             <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
-              Portfolio Showcase // Full-Stack, AI, Game Dev &amp; Research Projects
+              Portfolio Showcase | Full-Stack, AI, Game Dev &amp; Research Projects
             </p>
           </div>
           <div className="flex flex-wrap gap-3 mb-8">

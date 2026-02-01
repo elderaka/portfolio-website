@@ -12,7 +12,7 @@ export const OrganizationHistory = () => {
           <h3 className="text-4xl sm:text-4xl md:text-4xl font-bold uppercase tracking-tight">Organization History</h3>
         </div>
         <p className="text-stone-500 font-mono text-[9px] sm:text-xs uppercase tracking-widest">
-          Leadership &amp; Community Involvement // Teaching &amp; Mentorship
+          Leadership &amp; Community Involvement | Teaching &amp; Mentorship
         </p>
       </div>
 
