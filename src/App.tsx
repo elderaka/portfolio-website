@@ -106,19 +106,14 @@ function App() {
   const [wheelDragging, setWheelDragging] = useState(false)
   const [wheelWobble, setWheelWobble] = useState(0)
   const [heroTextIndex, setHeroTextIndex] = useState(0)
-  const [heroDisplayIndex, setHeroDisplayIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isLabTransitioning, setIsLabTransitioning] = useState(false)
   const [isProjectTransitioning, setIsProjectTransitioning] = useState(false)
   const animationsEnabled = import.meta.env.VITE_ANIMATIONS_ENABLED !== 'false'
-  const [setHeroMaxWidths] = useState<number[]>([0, 0, 0])
   // const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
   const [currentSection, setCurrentSection] = useState<string>('hero')
   const wheelRef = useRef<HTMLDivElement | null>(null)
-  const heroLine1Ref = useRef<HTMLSpanElement>(null)
-  const heroLine2Ref = useRef<HTMLSpanElement>(null)
-  const heroLine3Ref = useRef<HTMLSpanElement>(null)
   const dragStartAngleRef = useRef(0)
   const dragStartRotationRef = useRef(0)
   const velocityRef = useRef(0)
@@ -221,7 +216,6 @@ function App() {
       setTimeout(() => {
         const nextIndex = (heroTextIndex + 1) % heroTexts.length
         setHeroTextIndex(nextIndex)
-        setHeroDisplayIndex(nextIndex)
         setIsTransitioning(false)
         
         // Rotate wheel using reset animation logic
@@ -277,36 +271,6 @@ function App() {
     }, 3000)
     return () => clearInterval(interval)
   }, [heroTexts.length, heroTextIndex, wheelAngle, animationsEnabled])
-
-  useEffect(() => {
-    const measureWidths = () => {
-      if (!heroLine1Ref.current || !heroLine2Ref.current || !heroLine3Ref.current) return
-
-      const currentIndex = heroDisplayIndex
-      const nextIndex = heroTextIndex
-
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
-
-      ctx.font = getComputedStyle(heroLine1Ref.current).font
-
-      const maxWidths: number[] = []
-      for (let lineIdx = 0; lineIdx < 3; lineIdx++) {
-        const currentText = heroTexts[currentIndex][lineIdx]
-        const nextText = heroTexts[nextIndex][lineIdx]
-        const currentWidth = ctx.measureText(currentText).width
-        const nextWidth = ctx.measureText(nextText).width
-        maxWidths.push(Math.max(currentWidth, nextWidth))
-      }
-
-      setHeroMaxWidths(maxWidths)
-    }
-
-    measureWidths()
-    window.addEventListener('resize', measureWidths)
-    return () => window.removeEventListener('resize', measureWidths)
-  }, [heroDisplayIndex, heroTextIndex, heroTexts])
 
   useEffect(() => {
     return () => {
