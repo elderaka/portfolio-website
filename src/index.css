@@ -224,9 +224,18 @@ a {
   content: '';
   position: absolute;
   inset: 0;
-  background: #2c2c2c;
+  background: #F4F1EA;
   transform: translateX(0);
   animation: reveal-wipe 1.1s ease forwards;
+}
+
+@keyframes reveal-wipe {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes diamond-dash {
