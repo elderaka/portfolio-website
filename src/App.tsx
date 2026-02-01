@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import * as Tone from 'tone'
 import {
   Cpu,
   Gamepad2,
@@ -16,6 +17,7 @@ import {
   Linkedin,
   FolderOpen,
   Lightbulb,
+  EggFried,
 } from 'lucide-react'
 import personalData from './personal-data.json'
 // import { FullstackLab } from './components/labs/FullstackLab'
@@ -30,7 +32,7 @@ import { OrganizationHistory } from './components/OrganizationHistory'
 import { Publications } from './components/Publications'
 import { ContactMe } from './components/ContactMe'
 
-type LabKey = 'fullstack' | 'gamedev' | 'mas' | 'ai' | 'sqlite' | 'ml' | 'n8n'
+type LabKey = 'fullstack' | 'gamedev' | 'mas' | 'ai' | 'sqlite' | 'ml' | 'n8n' | 'outofthebox'
 
 const PROFILE_CONTEXT = {
   name: 'Lauda Dhia Raka',
@@ -112,6 +114,9 @@ function App() {
   const animationsEnabled = import.meta.env.VITE_ANIMATIONS_ENABLED !== 'false'
   // const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
   const [isDesktop, setIsDesktop] = useState(false)
+  const [pianoMode, setPianoMode] = useState(false)
+  const [keyShift, setKeyShift] = useState(0)
+  const [octaveShift, setOctaveShift] = useState(0)
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
   const [currentSection, setCurrentSection] = useState<string>('hero')
   const [ambientOrbs, setAmbientOrbs] = useState<Array<{
@@ -124,6 +129,7 @@ function App() {
     targetSize: number
   }>>([]);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [activePianoKeys, setActivePianoKeys] = useState<Set<string>>(new Set());
   const wheelRef = useRef<HTMLDivElement | null>(null)
   const dragStartAngleRef = useRef(0)
   const dragStartRotationRef = useRef(0)
@@ -137,6 +143,8 @@ function App() {
   const resetAnimRef = useRef<number | null>(null)
   const resetStartTimeRef = useRef(0)
   const autoAdjustTimeoutRef = useRef<number | null>(null)
+  const pianoRef = useRef<Tone.PolySynth | null>(null)
+  const activeKeyNotesRef = useRef<Map<string, string>>(new Map())
 
   const wheelItems = useMemo(() => [
     { icon: Layers, label: 'Fullstack Dev' },
@@ -146,6 +154,46 @@ function App() {
   ], [])
 
   const wheelOrder = useMemo(() => [0, 1, 3, 2], [])
+
+  const labNotes = useMemo<Record<LabKey, string>>(
+    () => ({
+      fullstack: 'C4',
+      gamedev: 'D4',
+      mas: 'E4',
+      ai: 'F4',
+      sqlite: 'G4',
+      ml: 'A4',
+      n8n: 'B4',
+      outofthebox: 'C5',
+    }),
+    []
+  )
+
+  const labKeyLabels = useMemo<Record<LabKey, string>>(
+    () => ({
+      fullstack: 'Q',
+      gamedev: 'W',
+      mas: 'E',
+      ai: 'R',
+      sqlite: 'T',
+      ml: 'Y',
+      n8n: 'U',
+      outofthebox: 'I',
+    }),
+    []
+  )
+
+  const blackKeyLabels = useMemo<(string | null)[]>(
+    () => ['2', '3', null, '5', '6', '7', null, null],
+    []
+  )
+
+  const keyNames = useMemo(() => ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'], [])
+
+  const getTransposedNote = (note: string) => {
+    const semitoneShift = keyShift + octaveShift * 12
+    return Tone.Frequency(note).transpose(semitoneShift).toNote()
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setBooted(true), 1000)
@@ -604,6 +652,13 @@ function App() {
         stack:
           'XGBoost, LightGBM, Sklearn, TensorFlow, PyTorch, TensorFlow.js, Feature Engineering, Time Series, Model Serving, MLOps, Experiment Tracking',
       },
+      outofthebox: {
+        title: 'Out of the Box Thinking',
+        description:
+          "I enjoy exploring unconventional approaches that make work more effective and fun. I look for creative shortcuts, playful prototypes, and unorthodox solutions that still ship cleanly and reliably.",
+        stack:
+          'Rapid Prototyping, Creative Problem Solving, UX Experiments, Design Sprints, Lightweight Automation, Exploratory Research',
+      },
     }),
     []
   )
@@ -638,6 +693,86 @@ function App() {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
+
+  const playPianoNote = async (note: string) => {
+    if (!isDesktop || !pianoMode) return
+    await Tone.start()
+    if (!pianoRef.current) {
+      pianoRef.current = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.01, decay: 0.2, sustain: 0.3, release: 0.8 },
+      }).toDestination()
+    }
+    pianoRef.current.triggerAttackRelease(getTransposedNote(note), '8n')
+  }
+
+  useEffect(() => {
+    if (!isDesktop || !pianoMode) return
+
+      const keyToNote: Record<string, string> = {
+      q: 'C4',
+      w: 'D4',
+      e: 'E4',
+      r: 'F4',
+      t: 'G4',
+      y: 'A4',
+      u: 'B4',
+      i: 'C5',
+      '2': 'C#4',
+      '3': 'D#4',
+      '5': 'F#4',
+      '6': 'G#4',
+      '7': 'A#4',
+    }
+
+    const ensureSynth = async () => {
+      await Tone.start()
+      if (!pianoRef.current) {
+        pianoRef.current = new Tone.PolySynth(Tone.Synth, {
+          oscillator: { type: 'triangle' },
+          envelope: { attack: 0.01, decay: 0.2, sustain: 0.3, release: 0.8 },
+        }).toDestination()
+      }
+    }
+
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.repeat) return
+      const target = event.target as HTMLElement | null
+      if (target && ['INPUT', 'TEXTAREA'].includes(target.tagName)) return
+
+      const key = event.key.toLowerCase()
+      const note = keyToNote[key]
+      if (!note) return
+
+      await ensureSynth()
+      const transposed = getTransposedNote(note)
+      pianoRef.current?.triggerAttack(transposed)
+      activeKeyNotesRef.current.set(key, transposed)
+      setActivePianoKeys(prev => new Set(prev).add(key))
+    }
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase()
+      const note = activeKeyNotesRef.current.get(key)
+      if (!note) return
+      pianoRef.current?.triggerRelease(note)
+      activeKeyNotesRef.current.delete(key)
+      setActivePianoKeys(prev => {
+        const updated = new Set(prev)
+        updated.delete(key)
+        return updated
+      })
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+      activeKeyNotesRef.current.clear()
+    }
+  }, [isDesktop, pianoMode, keyShift, octaveShift])
 
   return (
     <div className="min-h-screen bg-[#F4F1EA] text-[#2C2C2C] font-sans selection:bg-amber-400 scroll-smooth">
@@ -935,16 +1070,16 @@ function App() {
               <h3 className="text-4xl font-bold uppercase tracking-tight">My Expertise</h3>
             </div>
             <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
-              Technical Capabilities
+              Technical Capabilities.
             </p>
             <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
-              //TODO: Add interactive lab demos
+              //TODO: Add interactive and integrated demos
             </p>
           </div>
 {/* <div className="grid grid-cols-12 border border-stone-300 bg-white min-h-[720px] shadow-2xl overflow-hidden">
             <div className="col-span-12 md:col-span-3 border-r border-stone-300 bg-[#EBE7DF]/50 flex flex-col"> */}
           <div className="grid grid-cols-12 border border-stone-300 bg-white shadow-2xl overflow-hidden" style={{ minHeight: 'calc(7 * 4rem)' }}>
-            <div className="col-span-12 md:col-span-3 md:border-r border-stone-300 bg-[#EBE7DF]/50 grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col">
+            <div className={`col-span-12 md:col-span-3 md:border-r border-stone-300 bg-[#EBE7DF]/50 grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col relative${pianoMode && isDesktop ? ' lab-piano' : ''}`}>
               {[
                 { id: 'fullstack' as LabKey, icon: <Code2 size={16} />, label: 'Fullstack Dev' },
                 { id: 'gamedev' as LabKey, icon: <Gamepad2 size={16} />, label: 'Game Design' },
@@ -953,42 +1088,158 @@ function App() {
                 { id: 'sqlite' as LabKey, icon: <DatabaseZap size={16} />, label: 'Database Engineering' },
                 { id: 'ml' as LabKey, icon: <BrainCircuit size={16} />, label: 'Machine Learning' },
                 { id: 'n8n' as LabKey, icon: <Workflow size={16} />, label: 'Automation' },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    if (item.id === activeLab) return
-                    setIsLabTransitioning(true)
-                    setTimeout(() => {
-                      setActiveLab(item.id)
-                      setIsLabTransitioning(false)
-                    }, 250)
-                  }}
-                  className={`flex items-center gap-3 p-4 text-left border-b border-stone-300 transition-all uppercase font-mono text-[10px] font-bold ${
-                    activeLab === item.id ? 'bg-white text-amber-600' : 'hover:bg-white/50'
-                  }`}
-                >
-                  {item.icon} {item.label}
-                </button>
-              ))}
+                { id: 'outofthebox' as LabKey, icon: <Lightbulb size={16} />, label: 'Out of the Box' },
+              ].map((item) => {
+                const whiteKeyLabel = labKeyLabels[item.id]?.toLowerCase() || '';
+                const isKeyPressed = activePianoKeys.has(whiteKeyLabel);
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      void playPianoNote(labNotes[item.id])
+                      if (item.id === activeLab) return
+                      if (pianoMode) {
+                        setIsLabTransitioning(false)
+                        setActiveLab(item.id)
+                        return
+                      }
+                      setIsLabTransitioning(true)
+                      setTimeout(() => {
+                        setActiveLab(item.id)
+                        setIsLabTransitioning(false)
+                      }, 250)
+                    }}
+                    className={`relative flex items-center gap-3 p-4 text-left border-b border-stone-300 uppercase font-mono text-[10px] font-bold ${
+                      pianoMode ? '' : 'transition-all'
+                    } ${pianoMode && isDesktop ? 'lab-key lab-key--piano' : ''} ${
+                      activeLab === item.id ? 'bg-white text-amber-600' : 'hover:bg-white/50'
+                    } ${pianoMode && isDesktop && isKeyPressed ? 'lab-key--active' : ''}`}
+                  >
+                    <span className="lab-key-swap" aria-hidden="true">
+                      <span className="lab-key-icon">{item.icon}</span>
+                      <span className="lab-key-label">{isDesktop ? labKeyLabels[item.id] : ''}</span>
+                    </span>
+                    {item.label}
+                    {item.id === 'outofthebox' && (
+                      <span className="ml-auto text-black opacity-50">
+                        <EggFried size={12} />
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+              {pianoMode && isDesktop && (
+                <div className="lab-piano-black-keys">
+                  {blackKeyLabels.map((blackKey, tabIndex) => {
+                    if (!blackKey) return null;
+                    const blackKeyNote = {
+                      '2': 'C#4',
+                      '3': 'D#4',
+                      '4': 'F#4',
+                      '5': 'G#4',
+                      '6': 'A#4',
+                    }[blackKey];
+                    return (
+                      <div 
+                        key={`black-${tabIndex}`} 
+                        className="lab-black-key-divider" 
+                        style={{ top: `${36+ tabIndex * 49}px` }}
+                        onClick={() => blackKeyNote && playPianoNote(blackKeyNote)}
+                      >
+                        <span className={`lab-black-key ${activePianoKeys.has(blackKey) ? 'lab-black-key--active' : ''}`}>{blackKey}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {pianoMode && isDesktop && (
+                <div className="lab-piano-controls">
+                  <div className="lab-piano-row">
+                    <span className="lab-piano-label">Octave</span>
+                    <button
+                      type="button"
+                      className="lab-piano-btn"
+                      onClick={() => setOctaveShift((prev) => Math.max(prev - 1, -2))}
+                    >
+                      -
+                    </button>
+                    <span className="lab-piano-value">{octaveShift >= 0 ? `+${octaveShift}` : octaveShift}</span>
+                    <button
+                      type="button"
+                      className="lab-piano-btn"
+                      onClick={() => setOctaveShift((prev) => Math.min(prev + 1, 2))}
+                    >
+                      +
+                    </button>
+                    <span className="lab-piano-separator">|</span>
+                    <button
+                      type="button"
+                      className="lab-piano-btn"
+                      onClick={() => setKeyShift((prev) => prev - 1)}
+                    >
+                      -
+                    </button>
+                    <span className="lab-piano-value">{keyNames[(keyShift % 12 + 12) % 12]}</span>
+                    <button
+                      type="button"
+                      className="lab-piano-btn"
+                      onClick={() => setKeyShift((prev) => prev + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="col-span-12 md:col-span-9 p-6 md:p-10 bg-stone-50 overflow-y-auto flex flex-col">
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-2">
                   <span className="p-2 bg-amber-500 text-black"><Info size={16} /></span>
-                  <h4 className={` text-xl md:text-2xl font-bold uppercase tracking-tighter ${isLabTransitioning ? 'slide-out-text' : 'slide-in-text'}`} key={`title-${activeLab}`}>
+                  <h4
+                    className={` text-xl md:text-2xl font-bold uppercase tracking-tighter ${
+                      pianoMode ? '' : isLabTransitioning ? 'slide-out-text' : 'slide-in-text'
+                    }`}
+                    key={`title-${activeLab}`}
+                  >
                     {expertiseData[activeLab].title}
                   </h4>
                 </div>
-                <p className={`text-stone-600 text-md md:text-lg leading-relaxed max-w-2xl mb-4 italic ${isLabTransitioning ? 'slide-out-text slide-delay-1' : 'slide-in-text slide-delay-1'}`} key={`desc-${activeLab}`}>
-                  "{expertiseData[activeLab].description}"
+                <p
+                  className={`text-stone-600 text-md md:text-lg leading-relaxed max-w-2xl mb-4 italic ${
+                    pianoMode ? '' : isLabTransitioning ? 'slide-out-text slide-delay-1' : 'slide-in-text slide-delay-1'
+                  }`}
+                  key={`desc-${activeLab}`}
+                >
+                  "{pianoMode ? 'Have fun!' : expertiseData[activeLab].description}"
                 </p>
                 <div className="flex gap-2">
-                  <span className={`text-[10px] font-mono bg-stone-200 px-2 py-1 uppercase font-bold tracking-widest text-stone-500 inline-block ${isLabTransitioning ? 'slide-out-text slide-delay-2' : 'slide-in-text slide-delay-2'}`} key={`stack-${activeLab}`}>
+                  <span
+                    className={`text-[10px] font-mono bg-stone-200 px-2 py-1 uppercase font-bold tracking-widest text-stone-500 inline-block ${
+                      pianoMode ? '' : isLabTransitioning ? 'slide-out-text slide-delay-2' : 'slide-in-text slide-delay-2'
+                    }`}
+                    key={`stack-${activeLab}`}
+                  >
                     STACK: {expertiseData[activeLab].stack}
                   </span>
                 </div>
+                {activeLab === 'outofthebox' && isDesktop && (
+                  <label className="mt-6 inline-flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-stone-500">
+                    <input
+                      type="checkbox"
+                      checked={pianoMode}
+                      onChange={(event) => {
+                        const enabled = event.target.checked
+                        setPianoMode(enabled)
+                        if (enabled) {
+                          setIsLabTransitioning(false)
+                        }
+                      }}
+                    />
+                    I want to have fun
+                  </label>
+                )}
               </div>
 
               {/* {(

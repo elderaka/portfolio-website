@@ -383,4 +383,191 @@ a {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+@media (min-width: 768px) {
+  .lab-piano {
+    position: relative;
+  }
+
+  .lab-key {
+    position: relative;
+    background: #f4f1ea;
+    box-shadow: inset 0 -2px 0 rgba(44, 44, 44, 0.12);
+  }
+
+  .lab-key:hover {
+    background: #ebe7df;
+  }
+
+  .lab-key-swap {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 767px) {
+    .lab-key-label {
+      display: none !important;
+    }
+    
+    .lab-key--piano .lab-key-icon {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+  }
+
+  .lab-key-icon,
+  .lab-key-label {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .lab-key-icon svg {
+    width: 16px;
+    height: 16px;
+    color: #2c2c2c;
+  }
+
+  .lab-key-label {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ffb000;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 9px;
+    color: #2c2c2c;
+    background: #ffb000;
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  .lab-key--piano .lab-key-icon {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .lab-key--piano .lab-key-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .lab-key--active {
+    background: #fef3c7 !important;
+    box-shadow: inset 0 0 8px rgba(255, 176, 0, 0.3);
+  }
+
+  .lab-piano-black-keys {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .lab-black-key-divider {
+    position: absolute;
+    right: 0;
+    width: 25%;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+    pointer-events: auto;  }
+
+  .lab-black-key {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: #2c2c2c;
+    border-radius: 6px 0 0 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #ffb000;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.08em;
+    pointer-events: auto;
+    transition: all 0.1s ease;
+  }
+
+  .lab-black-key--active {
+    background: #ffb000;
+    color: #2c2c2c;
+    box-shadow: 0 2px 8px rgba(255, 176, 0, 0.4);
+  }
+
+  .lab-piano-controls {
+    padding: 12px 12px 14px;
+    display: grid;
+    gap: 10px;
+    background: #f4f1ea;
+  }
+
+  .lab-piano-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #2c2c2c;
+  }
+
+  .lab-piano-row {
+    display: grid;
+    grid-template-columns: auto 26px auto 26px auto 26px auto 26px;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lab-piano-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #2c2c2c;
+  }
+
+  .lab-piano-separator {
+    font-size: 12px;
+    color: #d1cfc9;
+    padding: 0 2px;
+  }
+
+  .lab-piano-value {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #2c2c2c;
+  }
+
+  .lab-piano-btn {
+    width: 26px;
+    height: 20px;
+    border: none;
+    background: #ffb000;
+    color: #2c2c2c;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+
+  .lab-piano-btn:hover {
+    background: #ffc24a;
+  }
+}
+
 
