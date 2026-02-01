@@ -18,6 +18,8 @@ import {
   FolderOpen,
   Lightbulb,
   EggFried,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import personalData from './personal-data.json'
 // import { FullstackLab } from './components/labs/FullstackLab'
@@ -68,11 +70,11 @@ const ProjectCard = ({
         </div>
       )}
       <div className="flex justify-between items-start mb-2 md:mb-4">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-stone-500">{project.category}</span>
-        <span className="text-[10px] font-mono text-amber-600">{project.tech}</span>
+        <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--theme-muted)' }}>{project.category}</span>
+        <span className="text-[10px] font-mono" style={{ color: 'var(--theme-accent)' }}>{project.tech}</span>
       </div>
-      <h3 className="text-xl font-bold mb-2 uppercase tracking-tighter group-hover:text-amber-700">{project.title}</h3>
-      <p className="text-sm text-stone-600 leading-relaxed mb-4">{project.description}</p>
+      <h3 className="text-xl font-bold mb-2 uppercase tracking-tighter project-card-title">{project.title}</h3>
+      <p className="text-sm leading-relaxed mb-4 project-card-desc">{project.description}</p>
     </>
   )
 
@@ -82,7 +84,7 @@ const ProjectCard = ({
         href={project.url}
         target="_blank"
         rel="noreferrer"
-        className={`group border border-stone-300 p-4 md:p-6 bg-[#EBE7DF]/40 hover:border-[#FFB000] transition-all duration-300 relative overflow-hidden ${animationClass}`}
+        className={`group project-card p-4 md:p-6 transition-all duration-300 relative overflow-hidden ${animationClass}`}
       >
         {content}
       </a>
@@ -90,7 +92,7 @@ const ProjectCard = ({
   }
 
   return (
-    <div className={`group border border-stone-300 p-4 md:p-6 bg-[#EBE7DF]/40 hover:border-[#FFB000] transition-all duration-300 relative overflow-hidden ${animationClass}`}>
+    <div className={`group project-card p-4 md:p-6 transition-all duration-300 relative overflow-hidden ${animationClass}`}>
       {content}
     </div>
   )
@@ -130,6 +132,10 @@ function App() {
   }>>([]);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [activePianoKeys, setActivePianoKeys] = useState<Set<string>>(new Set());
+  const [theme, setTheme] = useState<'' | 'deep-focus'>(() => {
+    const saved = localStorage.getItem('portfolio-theme')
+    return (saved === 'deep-focus' ? 'deep-focus' : '') as '' | 'deep-focus'
+  });
   const wheelRef = useRef<HTMLDivElement | null>(null)
   const dragStartAngleRef = useRef(0)
   const dragStartRotationRef = useRef(0)
@@ -194,6 +200,15 @@ function App() {
     const semitoneShift = keyShift + octaveShift * 12
     return Tone.Frequency(note).transpose(semitoneShift).toNote()
   }
+
+  useEffect(() => {
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', theme)
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+    }
+    localStorage.setItem('portfolio-theme', theme)
+  }, [theme])
 
   useEffect(() => {
     const timer = setTimeout(() => setBooted(true), 1000)
@@ -694,6 +709,25 @@ function App() {
     }
   }
 
+  const handleThemeToggle = () => {
+    setShowLoader(true)
+    setBooted(false)
+    
+    // Wait for loader to fully cover (fade in)
+    setTimeout(() => {
+      // Change theme while fully covered
+      setTheme(theme === 'deep-focus' ? '' : 'deep-focus')
+      
+      // Wait a bit to ensure theme fully applied, then start fade out
+      setTimeout(() => {
+        setBooted(true)
+        setTimeout(() => {
+          setShowLoader(false)
+        }, 600)
+      }, 300)
+    }, 600)
+  }
+
   const playPianoNote = async (note: string) => {
     if (!isDesktop || !pianoMode) return
     await Tone.start()
@@ -775,7 +809,7 @@ function App() {
   }, [isDesktop, pianoMode, keyShift, octaveShift])
 
   return (
-    <div className="min-h-screen bg-[#F4F1EA] text-[#2C2C2C] font-sans selection:bg-amber-400 scroll-smooth">
+    <div className="min-h-screen font-sans scroll-smooth" style={{ backgroundColor: 'var(--theme-bg)', color: 'var(--theme-text)' }}>
       {/* Ambient Orbs */}
       {ambientOrbs.map((orb) => (
         <div
@@ -784,7 +818,7 @@ function App() {
           style={{
             width: `${orb.size}px`,
             height: `${orb.size}px`,
-            background: '#FFB000',
+            background: 'var(--theme-orb)',
             left: `${orb.x}px`,
             top: `${orb.y}px`,
             opacity: 0.15,
@@ -804,94 +838,161 @@ function App() {
           </div>
         </div>
       )}
-      <nav className="border-b border-stone-300 p-4 sm:p-6 flex justify-between items-center bg-[#F4F1EA]/80 backdrop-blur sticky top-0 z-50">
-        <a href="#hero" onClick={(e) => handleSmoothScroll(e, 'hero')} className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
-          <div className="w-10 h-10 bg-black flex items-center justify-center text-white font-bold">LR</div>
-          <div>
-            <h1 className="text-sm font-bold uppercase tracking-widest">Lauda Dhia Raka</h1>
-            <p className="text-[10px] font-mono opacity-50 underline decoration-amber-500">Informatics Enthusiast</p>
+      <nav className="border-b p-4 sm:p-6 flex justify-between items-center backdrop-blur sticky top-0 z-50" style={{ borderColor: 'var(--theme-border)', backgroundColor: 'rgba(var(--theme-bg-rgb), 0.8)' }}>
+        <div className="flex items-center gap-4">
+          <a href="#hero" onClick={(e) => handleSmoothScroll(e, 'hero')} className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+            <div className="w-10 h-10 flex items-center justify-center text-white font-bold" 
+              style={{
+                backgroundColor: 'var(--theme-nav-active-bg)',
+                color: 'var(--theme-nav-active-text)'
+              }}>LR</div>
+            <div>
+              <h1 className="text-sm font-bold uppercase tracking-widest">Lauda Dhia Raka</h1>
+              <p className="text-[10px] font-mono opacity-50 underline" style={{ textDecorationColor: 'var(--theme-accent)' }}>
+                Informatics Enthusiast
+              </p>
+            </div>
+          </a>
+          
+          {/* Theme Toggle Switch */}
+          <button
+            onClick={handleThemeToggle}
+            className="relative w-14 h-7 rounded-full transition-colors"
+            style={{ 
+              backgroundColor: theme === 'deep-focus' ? 'var(--theme-accent)' : 'var(--theme-muted)',
+            }}
+            aria-label="Toggle theme"
+          >
+            <span 
+              className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300"
+              style={{ 
+                backgroundColor: 'var(--theme-bg)',
+                transform: theme === 'deep-focus' ? 'translateX(28px)' : 'translateX(0)',
+              }}
+            >
+              {theme === 'deep-focus' ? <Moon size={14} style={{ color: 'var(--theme-accent)' }} /> : <Sun size={14} style={{ color: 'var(--theme-accent)' }} />}
+            </span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex gap-3 font-mono text-[10px] uppercase font-bold">
+            <a 
+              href="#lab" 
+              onClick={(e) => handleSmoothScroll(e, 'lab')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'lab' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'lab' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'lab') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'lab') e.currentTarget.style.color = 'var(--theme-text)'
+              }}
+            >
+              Expertise
+            </a>
+            <a 
+              href="#projects" 
+              onClick={(e) => handleSmoothScroll(e, 'projects')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'projects' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'projects' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'projects') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'projects') e.currentTarget.style.color = 'var(--theme-text)'
+              }}
+            >
+              Archive
+            </a>
+            <a 
+              href="#career" 
+              onClick={(e) => handleSmoothScroll(e, 'career')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'career' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'career' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'career') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'career') e.currentTarget.style.color = 'var(--theme-text)'
+              }}
+            >
+              Career
+            </a>
+            <a 
+              href="#organizations" 
+              onClick={(e) => handleSmoothScroll(e, 'organizations')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'organizations' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'organizations' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'organizations') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'organizations') e.currentTarget.style.color = 'var(--theme-text)'
+              }}
+            >
+              Organizations
+            </a>
+            <a 
+              href="#publications" 
+              onClick={(e) => handleSmoothScroll(e, 'publications')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'publications' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'publications' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'publications') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'publications') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+            >
+              Publications
+            </a>
+            <a 
+              href="#contact" 
+              onClick={(e) => handleSmoothScroll(e, 'contact')}
+              className="px-3 py-2 transition-all cursor-pointer"
+              style={{
+                backgroundColor: currentSection === 'contact' ? 'var(--theme-nav-active-bg)' : 'transparent',
+                color: currentSection === 'contact' ? 'var(--theme-nav-active-text)' : 'var(--theme-text)'
+              }}
+              onMouseEnter={(e) => {
+                if (currentSection !== 'contact') e.currentTarget.style.color = 'var(--theme-accent)'
+              }}
+              onMouseLeave={(e) => {
+                if (currentSection !== 'contact') e.currentTarget.style.color = 'var(--theme-text)'
+              }}
+            >
+              Contact
+            </a>
           </div>
-        </a>
-        <div className="hidden sm:flex gap-3 font-mono text-[10px] uppercase font-bold">
-          <a 
-            href="#lab" 
-            onClick={(e) => handleSmoothScroll(e, 'lab')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'lab' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Expertise
-          </a>
-          <a 
-            href="#projects" 
-            onClick={(e) => handleSmoothScroll(e, 'projects')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'projects' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Archive
-          </a>
-          <a 
-            href="#career" 
-            onClick={(e) => handleSmoothScroll(e, 'career')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'career' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Career
-          </a>
-          <a 
-            href="#organizations" 
-            onClick={(e) => handleSmoothScroll(e, 'organizations')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'organizations' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Organizations
-          </a>
-          <a 
-            href="#publications" 
-            onClick={(e) => handleSmoothScroll(e, 'publications')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'publications' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Publications
-          </a>
-          <a 
-            href="#contact" 
-            onClick={(e) => handleSmoothScroll(e, 'contact')}
-            className={`px-3 py-2 transition-all cursor-pointer ${
-              currentSection === 'contact' 
-                ? 'bg-black !text-white' 
-                : 'text-stone-900 hover:text-amber-600'
-            }`}
-          >
-            Contact
-          </a>
         </div>
       </nav>
 
       <main className="w-full sm:max-w-6xl sm:mx-auto px-4 sm:px-6 pb-12 relative z-10">
         <section id="hero" className={`grid grid-cols-12 md:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="col-span-12 md:col-span-7 order-1 flex flex-col justify-center text-center md:text-left items-center md:items-start min-w-0">
-            <div className="hidden sm:inline-block px-2 py-1 bg-stone-200 font-mono text-[10px] uppercase mb-6">An aspiring Informatics Enthusiast with high Ambition</div>
+            <div className="hidden sm:inline-block px-2 py-1 font-mono text-[10px] uppercase mb-6" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-text)' }}>An aspiring Informatics Enthusiast with high Ambition</div>
             <h2 className="text-6xl pt-5 sm:pt-0 sm:text-5xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
               <span className="hero-text-wrapper">
                 {isTransitioning && (
                   <>
                     <span className="slide-out-text">{heroTexts[heroTextIndex][0]}</span> <br />
-                    <span className="text-stone-400 slide-out-text slide-delay-1">{heroTexts[heroTextIndex][1]}</span> <br />
+                    <span className="slide-out-text slide-delay-1" style={{ color: 'var(--theme-muted)' }}>{heroTexts[heroTextIndex][1]}</span> <br />
                     <span className="slide-out-text slide-delay-2">{heroTexts[heroTextIndex][2]}</span>
                   </>
                 )}
@@ -900,7 +1001,7 @@ function App() {
                     <span key={`line1-${heroTextIndex}`} className="slide-in-text">
                       {heroTexts[heroTextIndex][0]}
                     </span> <br />
-                    <span key={`line2-${heroTextIndex}`} className="text-stone-400 slide-in-text slide-delay-1">
+                    <span key={`line2-${heroTextIndex}`} className="slide-in-text slide-delay-1" style={{ color: 'var(--theme-muted)' }}>
                       {heroTexts[heroTextIndex][1]}
                     </span> <br />
                     <span key={`line3-${heroTextIndex}`} className="slide-in-text slide-delay-2">
@@ -910,7 +1011,7 @@ function App() {
                 )}
               </span>
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-stone-600 max-w-xl leading-relaxed mb-8">
+            <p className="text-base sm:text-lg lg:text-xl max-w-xl leading-relaxed mb-8" style={{ color: 'var(--theme-muted)' }}>
               I design full-stack systems where AI, data, and logic meet. My work is practical, fast, and tuned for real users.
             </p>
             <div className="flex gap-4">
@@ -918,19 +1019,31 @@ function App() {
                 href="/pdf/cv.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#2C2C2C] !text-[#F4F1EA] px-8 py-4 font-bold uppercase tracking-widest hover:bg-amber-600 hover:text-[#2C2C2C] transition-all flex items-center justify-center"
+                className="px-8 py-4 font-bold uppercase tracking-widest transition-all flex items-center justify-center"
+                style={{ 
+                  backgroundColor: 'var(--theme-nav-active-bg)', 
+                  color: 'var(--theme-nav-active-text)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent)'
+                  e.currentTarget.style.color = 'var(--theme-text)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--theme-nav-active-bg)'
+                  e.currentTarget.style.color = 'var(--theme-nav-active-text)'
+                }}
                 download
               >
                 Download CV
               </a>
-              <div className="flex items-center gap-4 px-6 border border-stone-300">
-                <a href={PROFILE_CONTEXT.contact.github} aria-label="Github" className="hover:text-amber-600">
+              <div className="flex items-center gap-4 px-6 border" style={{ borderColor: 'var(--theme-border)' }}>
+                <a href={PROFILE_CONTEXT.contact.github} aria-label="Github" className="transition-colors" style={{ color: 'var(--theme-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-accent)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text)'}>
                   <Github size={20} />
                 </a>
-                <a href={`mailto:${PROFILE_CONTEXT.contact.email}`} aria-label="Email" className="hover:text-amber-600">
+                <a href={`mailto:${PROFILE_CONTEXT.contact.email}`} aria-label="Email" className="transition-colors" style={{ color: 'var(--theme-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-accent)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text)'}>
                   <Mail size={20} />
                 </a>
-                <a href={PROFILE_CONTEXT.contact.linkedin} aria-label="LinkedIn" className="hover:text-amber-600">
+                <a href={PROFILE_CONTEXT.contact.linkedin} aria-label="LinkedIn" className="transition-colors" style={{ color: 'var(--theme-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--theme-accent)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--theme-text)'}>
                   <Linkedin size={20} />
                 </a>
               </div>
@@ -1002,6 +1115,9 @@ function App() {
                 onPointerCancel={() => setWheelDragging(false)}
                 onPointerLeave={() => setWheelDragging(false)}
               >
+                {/* Background layer - clipped to only show in top-left quadrant */}
+                <div className="wheel-background"></div>
+                
                 {/* Static highlight layer - DOES NOT ROTATE, clip-path stays at top-left */}
                 <div className="wheel-static-highlight">
                   <div className="wheel-static-rotor" style={{ transform: `rotate(${wheelAngle + wheelWobble}deg)` }}>
@@ -1010,8 +1126,8 @@ function App() {
                       const Icon = item.icon
                       return (
                         <div key={`static-${index}`} className="wheel-item" style={{ transform: `rotate(${-wheelAngle - wheelWobble}deg)` }}>
-                          <div className="wheel-item-inner border border-stone-300 p-6 flex flex-col justify-between" style={{ background: '#2C2C2C', color: '#F4F1EA' }}>
-                            <Icon size={32} className="text-amber-500" />
+                          <div className="wheel-item-inner border p-6 flex flex-col justify-between" style={{ borderColor: 'var(--theme-border)', backgroundColor: 'var(--theme-nav-active-bg)', color: 'var(--theme-nav-active-text)' }}>
+                            <Icon size={32} style={{ color: 'var(--theme-accent)' }} />
                             <span className="font-bold text-lg uppercase leading-none">{item.label}</span>
                           </div>
                         </div>
@@ -1027,8 +1143,8 @@ function App() {
                     const Icon = item.icon
                     return (
                       <div key={index} className="wheel-item" style={{ transform: `rotate(${-wheelAngle - wheelWobble}deg)` }}>
-                        <div className="wheel-item-inner border border-stone-300 p-6 flex flex-col justify-between">
-                          <Icon size={32} className="text-stone-400" />
+                        <div className="wheel-item-inner border p-6 flex flex-col justify-between" style={{ borderColor: 'var(--theme-border)', backgroundColor: 'var(--theme-surface)', color: 'var(--theme-text)' }}>
+                          <Icon size={32} style={{ color: 'var(--theme-muted)' }} />
                           <span className="font-bold text-lg uppercase leading-none">{item.label}</span>
                         </div>
                       </div>
@@ -1045,12 +1161,21 @@ function App() {
                   return (
                     <div
                       key={index}
-                      className={`border border-stone-300 p-4 flex flex-col justify-between transition-all duration-500 ${
-                        isHighlighted ? 'bg-[#2C2C2C]' : 'bg-white/40'
-                      }`}
+                      className="border p-4 flex flex-col justify-between transition-all duration-500"
+                      style={{
+                        borderColor: 'var(--theme-border)',
+                        backgroundColor: isHighlighted ? 'var(--theme-nav-active-bg)' : 'var(--theme-surface-hover)'
+                      }}
                     >
-                      <Icon size={24} className={`transition-colors duration-500 ${isHighlighted ? 'text-amber-500' : 'text-stone-400'}`} />
-                      <span className={`font-bold text-xs uppercase leading-tight transition-colors duration-500 ${isHighlighted ? 'text-[#F4F1EA]' : 'text-[#2C2C2C]'}`}>
+                      <Icon
+                        size={24}
+                        className="transition-colors duration-500"
+                        style={{ color: isHighlighted ? 'var(--theme-accent)' : 'var(--theme-muted)' }}
+                      />
+                      <span
+                        className="font-bold text-xs uppercase leading-tight transition-colors duration-500"
+                        style={{ color: isHighlighted ? 'var(--theme-nav-active-text)' : 'var(--theme-text)' }}
+                      >
                         {item.label}
                       </span>
                     </div>
@@ -1064,22 +1189,28 @@ function App() {
         <section id="lab" className={`mt-20 mb-24 scroll-snap-align-start transition-all duration-700 ${visibleSections.has('lab') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-stone-900 text-amber-500">
+              <div className="p-3" style={{ backgroundColor: 'var(--theme-nav-active-bg)', color: 'var(--theme-accent)' }}>
                 <Lightbulb size={24} />
               </div>
               <h3 className="text-4xl font-bold uppercase tracking-tight">My Expertise</h3>
             </div>
-            <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
+            <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--theme-muted)' }}>
               Technical Capabilities.
             </p>
-            <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
+            <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--theme-muted)' }}>
               //TODO: Add interactive and integrated demos
             </p>
           </div>
 {/* <div className="grid grid-cols-12 border border-stone-300 bg-white min-h-[720px] shadow-2xl overflow-hidden">
             <div className="col-span-12 md:col-span-3 border-r border-stone-300 bg-[#EBE7DF]/50 flex flex-col"> */}
-          <div className="grid grid-cols-12 border border-stone-300 bg-white shadow-2xl overflow-hidden" style={{ minHeight: 'calc(7 * 4rem)' }}>
-            <div className={`col-span-12 md:col-span-3 md:border-r border-stone-300 bg-[#EBE7DF]/50 grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col relative${pianoMode && isDesktop ? ' lab-piano' : ''}`}>
+          <div
+            className="grid grid-cols-12 border shadow-2xl overflow-hidden"
+            style={{ minHeight: 'calc(7 * 4rem)', borderColor: 'var(--theme-border)', backgroundColor: 'var(--theme-bg)' }}
+          >
+            <div
+              className={`col-span-12 md:col-span-3 md:border-r grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col relative${pianoMode && isDesktop ? ' lab-piano' : ''}`}
+              style={{ borderColor: 'var(--theme-border)', backgroundColor: 'var(--theme-surface-hover)' }}
+            >
               {[
                 { id: 'fullstack' as LabKey, icon: <Code2 size={16} />, label: 'Fullstack Dev' },
                 { id: 'gamedev' as LabKey, icon: <Gamepad2 size={16} />, label: 'Game Design' },
@@ -1110,11 +1241,26 @@ function App() {
                         setIsLabTransitioning(false)
                       }, 250)
                     }}
-                    className={`relative flex items-center gap-3 p-4 text-left border-b border-stone-300 uppercase font-mono text-[10px] font-bold ${
+                    className={`relative flex items-center gap-3 p-4 text-left border-b uppercase font-mono text-[10px] font-bold ${
                       pianoMode ? '' : 'transition-all'
                     } ${pianoMode && isDesktop ? 'lab-key lab-key--piano' : ''} ${
-                      activeLab === item.id ? 'bg-white text-amber-600' : 'hover:bg-white/50'
-                    } ${pianoMode && isDesktop && isKeyPressed ? 'lab-key--active' : ''}`}
+                      pianoMode && isDesktop && isKeyPressed ? 'lab-key--active' : ''
+                    }`}
+                    style={{
+                      borderColor: 'var(--theme-border)',
+                      backgroundColor: activeLab === item.id ? 'var(--theme-bg)' : 'transparent',
+                      color: activeLab === item.id ? 'var(--theme-accent)' : 'var(--theme-text)',
+                    }}
+                    onMouseEnter={(event) => {
+                      if (activeLab !== item.id) {
+                        event.currentTarget.style.backgroundColor = 'var(--theme-surface-hover)'
+                      }
+                    }}
+                    onMouseLeave={(event) => {
+                      if (activeLab !== item.id) {
+                        event.currentTarget.style.backgroundColor = 'transparent'
+                      }
+                    }}
                   >
                     <span className="lab-key-swap" aria-hidden="true">
                       <span className="lab-key-icon">{item.icon}</span>
@@ -1122,7 +1268,7 @@ function App() {
                     </span>
                     {item.label}
                     {item.id === 'outofthebox' && (
-                      <span className="ml-auto text-black opacity-50">
+                      <span className="ml-auto opacity-50" style={{ color: 'var(--theme-text)' }}>
                         <EggFried size={12} />
                       </span>
                     )}
@@ -1193,10 +1339,13 @@ function App() {
               )}
             </div>
 
-            <div className="col-span-12 md:col-span-9 p-6 md:p-10 bg-stone-50 overflow-y-auto flex flex-col">
+            <div
+              className="col-span-12 md:col-span-9 p-6 md:p-10 overflow-y-auto flex flex-col"
+              style={{ backgroundColor: 'var(--theme-surface)' }}
+            >
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="p-2 bg-amber-500 text-black"><Info size={16} /></span>
+                  <span className="p-2" style={{ backgroundColor: 'var(--theme-accent)', color: 'var(--theme-bg)' }}><Info size={16} /></span>
                   <h4
                     className={` text-xl md:text-2xl font-bold uppercase tracking-tighter ${
                       pianoMode ? '' : isLabTransitioning ? 'slide-out-text' : 'slide-in-text'
@@ -1207,25 +1356,30 @@ function App() {
                   </h4>
                 </div>
                 <p
-                  className={`text-stone-600 text-md md:text-lg leading-relaxed max-w-2xl mb-4 italic ${
+                  className={`text-md md:text-lg leading-relaxed max-w-2xl mb-4 italic ${
                     pianoMode ? '' : isLabTransitioning ? 'slide-out-text slide-delay-1' : 'slide-in-text slide-delay-1'
                   }`}
                   key={`desc-${activeLab}`}
+                  style={{ color: 'var(--theme-muted)' }}
                 >
                   "{pianoMode ? 'Have fun!' : expertiseData[activeLab].description}"
                 </p>
                 <div className="flex gap-2">
                   <span
-                    className={`text-[10px] font-mono bg-stone-200 px-2 py-1 uppercase font-bold tracking-widest text-stone-500 inline-block ${
+                    className={`text-[10px] font-mono px-2 py-1 uppercase font-bold tracking-widest inline-block ${
                       pianoMode ? '' : isLabTransitioning ? 'slide-out-text slide-delay-2' : 'slide-in-text slide-delay-2'
                     }`}
                     key={`stack-${activeLab}`}
+                    style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-muted)' }}
                   >
                     STACK: {expertiseData[activeLab].stack}
                   </span>
                 </div>
                 {activeLab === 'outofthebox' && isDesktop && (
-                  <label className="mt-6 inline-flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-stone-500">
+                  <label
+                    className="mt-6 inline-flex items-center gap-3 text-xs font-mono uppercase tracking-widest"
+                    style={{ color: 'var(--theme-muted)' }}
+                  >
                     <input
                       type="checkbox"
                       checked={pianoMode}
@@ -1260,12 +1414,12 @@ function App() {
         <section id="projects" className={`mb-24 scroll-snap-align-start transition-all duration-700 ${visibleSections.has('projects') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-stone-900 text-amber-500">
+              <div className="p-3" style={{ backgroundColor: 'var(--theme-nav-active-bg)', color: 'var(--theme-accent)' }}>
                 <FolderOpen size={24} />
               </div>
               <h3 className="text-4xl font-bold uppercase tracking-tight">Project Archive</h3>
             </div>
-            <p className="text-stone-500 font-mono text-xs uppercase tracking-widest">
+            <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--theme-muted)' }}>
               Portfolio Showcase | Full-Stack, AI, Game Dev &amp; Research Projects
             </p>
           </div>
@@ -1281,11 +1435,24 @@ function App() {
                 <button
                   key={tag.id}
                   onClick={() => setActiveProjectTag(tag.id as typeof activeProjectTag)}
-                  className={`px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all ${
-                    activeProjectTag === tag.id
-                      ? 'bg-black text-amber-500 border-black'
-                      : 'bg-white border-stone-300 text-stone-500 hover:border-black hover:text-black'
-                  }`}
+                  className="px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all"
+                  style={{
+                    backgroundColor: activeProjectTag === tag.id ? 'var(--theme-nav-active-bg)' : 'var(--theme-bg)',
+                    color: activeProjectTag === tag.id ? 'var(--theme-accent)' : 'var(--theme-muted)',
+                    borderColor: activeProjectTag === tag.id ? 'var(--theme-nav-active-bg)' : 'var(--theme-border)',
+                  }}
+                  onMouseEnter={(event) => {
+                    if (activeProjectTag !== tag.id) {
+                      event.currentTarget.style.borderColor = 'var(--theme-accent)'
+                      event.currentTarget.style.color = 'var(--theme-text)'
+                    }
+                  }}
+                  onMouseLeave={(event) => {
+                    if (activeProjectTag !== tag.id) {
+                      event.currentTarget.style.borderColor = 'var(--theme-border)'
+                      event.currentTarget.style.color = 'var(--theme-muted)'
+                    }
+                  }}
                 >
                   {tag.label} ({projectCounts[tag.id as keyof typeof projectCounts]})
                 </button>
@@ -1311,15 +1478,29 @@ function App() {
                 }, 150)
               }}
               disabled={clampedProjectPage === 1}
-              className={`px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all ${
-                clampedProjectPage === 1
-                  ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
-                  : 'bg-white border-stone-300 text-stone-500 hover:border-black hover:text-black'
-              }`}
+              className="px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all"
+              style={{
+                backgroundColor: clampedProjectPage === 1 ? 'var(--theme-surface)' : 'var(--theme-bg)',
+                color: clampedProjectPage === 1 ? 'var(--theme-muted)' : 'var(--theme-muted)',
+                borderColor: 'var(--theme-border)',
+                cursor: clampedProjectPage === 1 ? 'not-allowed' : 'pointer',
+              }}
+              onMouseEnter={(event) => {
+                if (clampedProjectPage !== 1) {
+                  event.currentTarget.style.borderColor = 'var(--theme-accent)'
+                  event.currentTarget.style.color = 'var(--theme-text)'
+                }
+              }}
+              onMouseLeave={(event) => {
+                if (clampedProjectPage !== 1) {
+                  event.currentTarget.style.borderColor = 'var(--theme-border)'
+                  event.currentTarget.style.color = 'var(--theme-muted)'
+                }
+              }}
             >
               Prev
             </button>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-stone-500">
+            <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--theme-muted)' }}>
               Page {clampedProjectPage} / {totalProjectPages}
             </span>
             <button
@@ -1331,11 +1512,25 @@ function App() {
                 }, 150)
               }}
               disabled={clampedProjectPage === totalProjectPages}
-              className={`px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all ${
-                clampedProjectPage === totalProjectPages
-                  ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
-                  : 'bg-white border-stone-300 text-stone-500 hover:border-black hover:text-black'
-              }`}
+              className="px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-all"
+              style={{
+                backgroundColor: clampedProjectPage === totalProjectPages ? 'var(--theme-surface)' : 'var(--theme-bg)',
+                color: clampedProjectPage === totalProjectPages ? 'var(--theme-muted)' : 'var(--theme-muted)',
+                borderColor: 'var(--theme-border)',
+                cursor: clampedProjectPage === totalProjectPages ? 'not-allowed' : 'pointer',
+              }}
+              onMouseEnter={(event) => {
+                if (clampedProjectPage !== totalProjectPages) {
+                  event.currentTarget.style.borderColor = 'var(--theme-accent)'
+                  event.currentTarget.style.color = 'var(--theme-text)'
+                }
+              }}
+              onMouseLeave={(event) => {
+                if (clampedProjectPage !== totalProjectPages) {
+                  event.currentTarget.style.borderColor = 'var(--theme-border)'
+                  event.currentTarget.style.color = 'var(--theme-muted)'
+                }
+              }}
             >
               Next
             </button>
@@ -1348,13 +1543,37 @@ function App() {
         <ContactMe />
       </main>
 
-      <footer className="py-12 bg-stone-200 border-t border-stone-300 px-4 sm:px-6">
+      <footer
+        className="py-12 border-t px-4 sm:px-6"
+        style={{ backgroundColor: 'var(--theme-surface)', borderColor: 'var(--theme-border)', color: 'var(--theme-muted)' }}
+      >
         <div className="w-full flex justify-between items-center font-mono text-[10px] uppercase opacity-40">
           <span>© 2026 Made with ❤️ by Lauda Dhia Raka </span>
           <div className="flex gap-6">
-            <a href={PROFILE_CONTEXT.contact.github} className="hover:text-black">Github</a>
-            <a href={`mailto:${PROFILE_CONTEXT.contact.email}`} className="hover:text-black">Email</a>
-            <a href={PROFILE_CONTEXT.contact.linkedin} className="hover:text-black">LinkedIn</a>
+            <a
+              href={PROFILE_CONTEXT.contact.github}
+              className="transition-colors"
+              onMouseEnter={(event) => { event.currentTarget.style.color = 'var(--theme-text)' }}
+              onMouseLeave={(event) => { event.currentTarget.style.color = 'var(--theme-muted)' }}
+            >
+              Github
+            </a>
+            <a
+              href={`mailto:${PROFILE_CONTEXT.contact.email}`}
+              className="transition-colors"
+              onMouseEnter={(event) => { event.currentTarget.style.color = 'var(--theme-text)' }}
+              onMouseLeave={(event) => { event.currentTarget.style.color = 'var(--theme-muted)' }}
+            >
+              Email
+            </a>
+            <a
+              href={PROFILE_CONTEXT.contact.linkedin}
+              className="transition-colors"
+              onMouseEnter={(event) => { event.currentTarget.style.color = 'var(--theme-text)' }}
+              onMouseLeave={(event) => { event.currentTarget.style.color = 'var(--theme-muted)' }}
+            >
+              LinkedIn
+            </a>
           </div>
         </div>
       </footer>
