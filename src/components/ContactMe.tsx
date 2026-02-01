@@ -42,7 +42,7 @@ export const ContactMe = () => {
                   Email
                 </span>
               </div>
-              <p className="font-mono text-xs sm:text-sm break-all transition-colors group-hover:" style={{ color: 'var(--contact-text)', '--contact-hover-color': 'var(--contact-text-hover)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--contact-text-hover)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--contact-text)'}>{personalData.contact.email}</p>
+              <p className="font-mono text-xs sm:text-sm break-all transition-colors group-hover:" style={{ color: 'var(--contact-text)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--contact-text-hover)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--contact-text)'}>{personalData.contact.email}</p>
             </a>
 
             {/* GitHub */}
