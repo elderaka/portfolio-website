@@ -605,10 +605,10 @@ function App() {
       </nav>
 
       <main className="w-full sm:max-w-6xl sm:mx-auto px-4 sm:px-6 pb-12">
-        <section id="hero" className={`grid grid-cols-12 lg:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="col-span-12 lg:col-span-7 order-1 flex flex-col justify-center text-center lg:text-left items-center lg:items-start min-w-0">
+        <section id="hero" className={`grid grid-cols-12 md:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="col-span-12 md:col-span-7 order-1 flex flex-col justify-center text-center md:text-left items-center md:items-start min-w-0">
             <div className="hidden sm:inline-block px-2 py-1 bg-stone-200 font-mono text-[10px] uppercase mb-6">An aspiring Informatics Enthusiast with high Ambition</div>
-            <h2 className="text-5xl pt-5 sm:pt-0 sm:text-5xl md:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
+            <h2 className="text-6xl pt-5 sm:pt-0 sm:text-5xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
               <span className="hero-text-wrapper">
                 {isTransitioning && (
                   <>
@@ -632,7 +632,7 @@ function App() {
                 )}
               </span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-stone-600 max-w-xl leading-relaxed mb-8">
+            <p className="text-base sm:text-lg lg:text-xl text-stone-600 max-w-xl leading-relaxed mb-8">
               I design full-stack systems where AI, data, and gameplay logic meet. My work is practical, fast, and tuned for real users.
             </p>
             <div className="flex gap-4">
@@ -658,8 +658,8 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="col-span-12 lg:col-span-5 order-2 mt-10 lg:mt-0 w-full max-w-md lg:max-w-none mx-auto">
-            <div className="hidden lg:block">
+          <div className="col-span-12 md:col-span-5 order-2 mt-10 md:mt-0 w-full max-w-md md:max-w-none mx-auto">
+            <div className="hidden md:block">
               <div
                 ref={wheelRef}
                 className={`wheel-wrap${wheelDragging ? ' wheel-dragging' : ''}`}
@@ -757,7 +757,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="lg:hidden">
+            <div className="md:hidden">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {wheelItems.map((item, index) => {
                   const Icon = item.icon
@@ -796,7 +796,7 @@ function App() {
 {/* <div className="grid grid-cols-12 border border-stone-300 bg-white min-h-[720px] shadow-2xl overflow-hidden">
             <div className="col-span-12 md:col-span-3 border-r border-stone-300 bg-[#EBE7DF]/50 flex flex-col"> */}
           <div className="grid grid-cols-12 border border-stone-300 bg-white shadow-2xl overflow-hidden" style={{ minHeight: 'calc(7 * 4rem)' }}>
-            <div className="col-span-12 md:col-span-3 md:border-r border-stone-300 bg-[#EBE7DF]/50 grid grid-cols-2 sm:grid-cols-4 lg:flex lg:flex-col">
+            <div className="col-span-12 md:col-span-3 md:border-r border-stone-300 bg-[#EBE7DF]/50 grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col">
               {[
                 { id: 'fullstack' as LabKey, icon: <Code2 size={16} />, label: 'Fullstack Dev' },
                 { id: 'gamedev' as LabKey, icon: <Gamepad2 size={16} />, label: 'Game Design' },
@@ -893,7 +893,7 @@ function App() {
               ))
             }
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-3 gap-6">
             {pagedProjects.map((project) => (
               <ProjectCard 
                 key={project.title} 
