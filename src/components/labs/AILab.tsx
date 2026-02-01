@@ -3,7 +3,7 @@ import { Send, RefreshCw } from 'lucide-react'
 
 const PROFILE_CONTEXT = {
   name: 'Lauda Dhia Raka',
-  role: 'Informatics Undergraduate / System Architect',
+  role: 'Informatics Enthusiast / System Architect',
   specialties: ['Multi-Agent Systems', 'Applied AI', 'Full-stack Dev', 'System Architecture'],
   experience: [
     'PT. Elnusa Fabrikasi Konstruksi (Fullstack)',
