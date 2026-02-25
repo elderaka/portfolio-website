@@ -1007,7 +1007,7 @@ function App() {
         <section id="hero" className={`grid grid-cols-12 md:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="col-span-12 md:col-span-7 order-1 flex flex-col justify-center text-center md:text-left items-center md:items-start min-w-0">
             <div className="hidden sm:inline-block px-2 py-1 font-mono text-[10px] uppercase mb-6" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-text)' }}>An aspiring Informatics Enthusiast with high Ambition</div>
-            <h2 className="text-6xl pt-5 sm:pt-0 sm:text-5xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
+            <h2 className="text-5xl pt-5 sm:pt-0 sm:text-5xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
               <span className="hero-text-wrapper">
                 {isTransitioning && (
                   <>
