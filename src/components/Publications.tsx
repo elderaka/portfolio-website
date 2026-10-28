@@ -98,6 +98,11 @@ export const Publications = () => {
                 <h5 className="text-xl font-bold uppercase tracking-tight mb-3 section-title">
                   {edu.institution}
                 </h5>
+                {edu.honors && (
+                  <p className="text-xs font-mono uppercase tracking-widest section-accent-text mb-3">
+                    {edu.honors}{edu.duration ? ` · Graduated in ${edu.duration}` : ''}
+                  </p>
+                )}
 
                 {/* Period & Location */}
                 <div className="flex flex-col gap-2 mb-4">

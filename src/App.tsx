@@ -38,7 +38,7 @@ type LabKey = 'fullstack' | 'gamedev' | 'mas' | 'ai' | 'sqlite' | 'ml' | 'n8n' |
 
 const PROFILE_CONTEXT = {
   name: 'Lauda Dhia Raka',
-  role: 'Informatics Enthusiast / System Architect',
+  role: 'Full-Stack AI Engineer',
   specialties: ['Multi-Agent Systems', 'Applied AI', 'Full-stack Dev', 'System Architecture'],
   experience: [
     'PT. Elnusa Fabrikasi Konstruksi (Fullstack)',
@@ -46,7 +46,7 @@ const PROFILE_CONTEXT = {
     'Sintesa Inti Prestasi (Fullstack)',
     'Advanced Software Engineering Lab',
   ],
-  projects: ['LMS EFK (Agentic AI)', 'UK Cobenefit (GIS)', 'HireIT AI (IBM watsonx)', 'MASONRY (Minecraft NPC Sim)'],
+  projects: ['Pleiades (Multi-Agent AI)', 'AlterOS (Semantic Dialogue)', 'Echoes of Babel (Game AI)', 'UK Co-Benefits Atlas (GIS)'],
   contact: {
     email: 'laudadraka@gmail.com',
     github: 'https://github.com/elderaka',
@@ -387,14 +387,14 @@ function App() {
   }, [])
 
   const MobileHeroTexts = useMemo(() => [
-    ['Fullstack', 'Engineer', '& Architect'],
+    ['Full-Stack', 'AI', 'Engineer'],
     ['Game', 'Development', '& Ideation'],
     ['Development', 'Security', '& Operation'],
     ['Machine', 'Learning', '& Applied AI'],
   ], [])
 
   const DesktopHeroTexts = useMemo(() => [
-    ['Fullstack', 'Engineer', '& Architect'],
+    ['Full-Stack', 'AI', 'Engineer'],
     ['Machine', 'Learning', '& Applied AI'],
     ['Development', 'Security', '& Operation'],
     ['Game', 'Development', '& Ideation'],
@@ -1006,7 +1006,7 @@ function App() {
       <main className="w-full sm:max-w-6xl sm:mx-auto px-4 sm:px-6 pb-12 relative z-10">
         <section id="hero" className={`grid grid-cols-12 md:gap-12 items-center min-h-[calc(100svh-6rem)] scroll-snap-align-start transition-all duration-700 ${visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="col-span-12 md:col-span-7 order-1 flex flex-col justify-center text-center md:text-left items-center md:items-start min-w-0">
-            <div className="hidden sm:inline-block px-2 py-1 font-mono text-[10px] uppercase mb-6" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-text)' }}>An aspiring Informatics Enthusiast with high Ambition</div>
+            <div className="hidden sm:inline-block px-2 py-1 font-mono text-[10px] uppercase mb-6" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-text)' }}>Full-Stack AI Engineer at Keption</div>
             <h2 className="text-5xl pt-5 sm:pt-0 sm:text-5xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] mb-8 break-words max-w-full relative">
               <span className="hero-text-wrapper">
                 {isTransitioning && (
@@ -1032,7 +1032,7 @@ function App() {
               </span>
             </h2>
             <p className="text-base sm:text-lg lg:text-xl max-w-xl leading-relaxed mb-8" style={{ color: 'var(--theme-muted)' }}>
-              I design full-stack systems where AI, data, and logic meet. My work is practical, fast, and tuned for real users.
+              I build full-stack products and applied AI systems at Keption. Beyond work, I explore multi-agent architectures, semantic game systems, and practical engineering tools.
             </p>
             <div className="flex gap-4">
               <a
