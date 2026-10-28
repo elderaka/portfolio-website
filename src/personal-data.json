@@ -2,7 +2,7 @@
   "education": [
     {
       "institution": "Telkom University",
-      "degree": "Informatics Undergraduate",
+      "degree": "Bachelor of Informatics",
       "gpa": "3.87",
       "period": "September 2022 - January 2026",
       "location": "Bandung, West Java",
@@ -23,17 +23,37 @@
         "API Design & Development",
         "DevOps & CI/CD",
         "Agile Methodologies"
-      ]
+      ],
+      "honors": "Cum Laude",
+      "duration": "3.5 years"
     }
   ],
   "professional_experience": [
+    {
+      "role": "Full-Stack AI Engineer",
+      "company": "Keption",
+      "period": "2026 – Present",
+      "location": "Indonesia",
+      "description": "Developing full-stack applications and applied AI integrations across frontend interfaces, backend services, and APIs.",
+      "stack": [
+        "Full-Stack Engineering",
+        "Applied AI",
+        "API Integration"
+      ]
+    },
     {
       "role": "Fullstack Developer",
       "company": "Pt. Elnusa Fabrikasi Konstruksi",
       "period": "September 2025 - January 2026",
       "location": "Jakarta Selatan, DKI Jakarta",
       "description": "Developed a full-stack job portal using Vue.js, Express.js, and PostgreSQL. Integrated Gemini-powered assessment engine for candidate filtering and implemented MFA.",
-      "stack": ["Vue.js", "Express.js", "PostgreSQL", "Gemini API", "MFA"]
+      "stack": [
+        "Vue.js",
+        "Express.js",
+        "PostgreSQL",
+        "Gemini API",
+        "MFA"
+      ]
     },
     {
       "role": "Laboratory Assistant",
@@ -41,7 +61,10 @@
       "period": "February 2025 - September 2025",
       "location": "Bandung, West Java",
       "description": "Led practical lab sessions for OOP and Operating Systems concepts for 2nd and 3rd-year students.",
-      "stack": ["OOP", "Operating Systems"]
+      "stack": [
+        "OOP",
+        "Operating Systems"
+      ]
     },
     {
       "role": "Backend Developer",
@@ -49,7 +72,12 @@
       "period": "September 2024 - December 2024",
       "location": "Bekasi, West Java",
       "description": "Developed a CMS for ICICYTA conference scheduling website.",
-      "stack": ["Laravel", "PHP", "React.js", "MySQL"]
+      "stack": [
+        "Laravel",
+        "PHP",
+        "React.js",
+        "MySQL"
+      ]
     },
     {
       "role": "Fullstack Developer",
@@ -57,7 +85,12 @@
       "period": "June 2024 - September 2024",
       "location": "Bekasi, West Java",
       "description": "Developed school admission (PPDB) system. Authored technical documentation for telemedicine projects.",
-      "stack": ["Laravel", "Quasar", "Vue.js", "Git"]
+      "stack": [
+        "Laravel",
+        "Quasar",
+        "Vue.js",
+        "Git"
+      ]
     }
   ],
   "organizational_experience": [
@@ -110,11 +143,36 @@
   },
   "projects": [
     {
-      "title": "LMS EFK",
+      "title": "Pleiades",
       "category": "Agentic AI",
-      "tech": "Vue.js / Node.js",
-      "description": "Autonomous course creation and grading engine.",
-      "tags": ["web-dev", "ml-ai"]
+      "tech": "FastAPI / OpenClaw",
+      "description": "A chat-first multi-agent AI workforce that coordinates specialized agents for business and engineering workflows.",
+      "url": "https://pleiadesian.tech/",
+      "tags": [
+        "web-dev",
+        "ml-ai"
+      ]
+    },
+    {
+      "title": "AlterOS",
+      "category": "Interactive AI",
+      "tech": "Unity / C# / Embeddings",
+      "description": "An interactive companion game with local semantic dialogue routing, authored conversations, and speech integration.",
+      "url": "https://github.com/elderaka/alteros",
+      "tags": [
+        "game-dev",
+        "ml-ai"
+      ]
+    },
+    {
+      "title": "Echoes of Babel",
+      "category": "Game AI",
+      "tech": "Unity / C# / MiniLM",
+      "description": "A narrative RPG where typed dialogue drives negotiation, support, and quests through local semantic intent interpretation.",
+      "tags": [
+        "game-dev",
+        "ml-ai"
+      ]
     },
     {
       "title": "UK Cobenefit",
@@ -122,24 +180,19 @@
       "tech": "MapLibre / PMTiles",
       "description": "Hierarchical geographic visualization for net-zero advocacy.",
       "url": "https://github.com/elderaka/ECCI-Data-Visualization",
-      "tags": ["web-dev"]
+      "tags": [
+        "web-dev"
+      ]
     },
     {
-      "title": "MASONRY",
-      "category": "Game Sim",
-      "tech": "Unity / C#",
-      "description": "Collective NPC behavior modeling in 3D ecosystems.",
-      "url": "https://github.com/elderaka/MASONRY-Multi-Agent-Simulation-Of-NPC-in-Minecraft-ecosYstem",
-      "tags": ["game-dev", "ml-ai"]
-    },
-    {
-      "title": "Nirwana Pancarona",
-      "category": "Indie Game",
-      "tech": "GameMaker",
-      "description": "Bullet hell mechanics with tuned boss state machines.",
-      
-      "url": "https://github.com/elderaka/paraindigo",
-      "tags": ["game-dev"]
+      "title": "LMS EFK",
+      "category": "Agentic AI",
+      "tech": "Vue.js / Node.js",
+      "description": "Autonomous course creation and grading engine.",
+      "tags": [
+        "web-dev",
+        "ml-ai"
+      ]
     },
     {
       "title": "HireIT AI",
@@ -147,7 +200,31 @@
       "tech": "Watsonx",
       "description": "Recruitment automation pipeline with multi-agent orchestration.",
       "url": "https://github.com/elderaka/HireIT-AI",
-      "tags": ["ml-ai", "web-dev"]
+      "tags": [
+        "ml-ai",
+        "web-dev"
+      ]
+    },
+    {
+      "title": "MASONRY",
+      "category": "Game Sim",
+      "tech": "Unity / C#",
+      "description": "Collective NPC behavior modeling in 3D ecosystems.",
+      "url": "https://github.com/elderaka/MASONRY-Multi-Agent-Simulation-Of-NPC-in-Minecraft-ecosYstem",
+      "tags": [
+        "game-dev",
+        "ml-ai"
+      ]
+    },
+    {
+      "title": "Nirwana Pancarona",
+      "category": "Indie Game",
+      "tech": "GameMaker",
+      "description": "Bullet hell mechanics with tuned boss state machines.",
+      "url": "https://github.com/elderaka/paraindigo",
+      "tags": [
+        "game-dev"
+      ]
     },
     {
       "title": "Personality CLF",
@@ -155,7 +232,9 @@
       "tech": "Python / Sklearn",
       "description": "Text analysis model for personality prediction.",
       "url": "https://github.com/elderaka/MBTI-Personality-Classification-Based-on-Analysis-Text-with-TF-IDF",
-      "tags": ["ml-ai"]
+      "tags": [
+        "ml-ai"
+      ]
     },
     {
       "title": "Portfolio Website",
@@ -163,7 +242,9 @@
       "tech": "TypeScript",
       "description": "Primary portfolio site codebase.",
       "url": "https://github.com/elderaka/portfolio-website",
-      "tags": ["web-dev"]
+      "tags": [
+        "web-dev"
+      ]
     },
     {
       "title": "LLM Agent White-Boxed",
@@ -171,7 +252,9 @@
       "tech": "Python",
       "description": "White-boxed agent experimentation and analysis.",
       "url": "https://github.com/elderaka/LLM-Agent-White-Boxed",
-      "tags": ["ml-ai"]
+      "tags": [
+        "ml-ai"
+      ]
     },
     {
       "title": "Data Structure Tree",
@@ -179,7 +262,9 @@
       "tech": "JavaScript",
       "description": "Data structure exploration and visual logic.",
       "url": "https://github.com/elderaka/datastructure-tree",
-      "tags": ["web-dev"]
+      "tags": [
+        "web-dev"
+      ]
     },
     {
       "title": "Unity Compfest 17",
@@ -187,7 +272,9 @@
       "tech": "C#",
       "description": "Unity project for Compfest 17.",
       "url": "https://github.com/elderaka/Unity-Compfest-17",
-      "tags": ["game-dev"]
+      "tags": [
+        "game-dev"
+      ]
     },
     {
       "title": "Menilai Buku dari Sampulnya",
@@ -195,7 +282,9 @@
       "tech": "Jupyter",
       "description": "Book cover analysis experiments.",
       "url": "https://github.com/elderaka/menilai-buku-dari-sampulnya",
-      "tags": ["ml-ai"]
+      "tags": [
+        "ml-ai"
+      ]
     },
     {
       "title": "Reddit MBTI Scraper",
@@ -203,7 +292,9 @@
       "tech": "Python",
       "description": "Scraper for MBTI-related subreddit data.",
       "url": "https://github.com/elderaka/Reddit-MBTI-Scraper",
-      "tags": ["ml-ai"]
+      "tags": [
+        "ml-ai"
+      ]
     },
     {
       "title": "Humic ICICyTA 2024",
@@ -211,7 +302,9 @@
       "tech": "Python",
       "description": "Research artifacts for ICICyTA 2024.",
       "url": "https://github.com/elderaka/Humic-ICICyTA-2024",
-      "tags": ["web-dev"]
+      "tags": [
+        "web-dev"
+      ]
     },
     {
       "title": "Single Agent Reinforcement Learning",
@@ -219,7 +312,9 @@
       "tech": "Python",
       "description": "Single-agent RL experiments and baselines.",
       "url": "https://github.com/elderaka/Single-Agent-Reinforcement-Learning",
-      "tags": ["ml-ai"]
+      "tags": [
+        "ml-ai"
+      ]
     },
     {
       "title": "Travel-U",
@@ -227,7 +322,10 @@
       "tech": "Vue",
       "description": "Travel app client for group project.",
       "url": "https://github.com/elderaka/mobileapp-travel-u-kelompok-2",
-      "tags": ["mobile-dev", "web-dev"]
+      "tags": [
+        "mobile-dev",
+        "web-dev"
+      ]
     }
   ]
 }
